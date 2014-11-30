@@ -74,10 +74,11 @@ eonInterfaceEntry OBJECT-TYPE
    
 EonInterfaceEntry ::= SEQUENCE {
   eonInterfaceIndex                  InterfaceIndexOrZero,
-  eonInterfaceLambdaMinIn            EonLambda,
-  eonInterfaceLambdaMaxIn            EonLambda,
-  eonInterfaceLambdaMinOut           EonLambda,
-  eonInterfaceLambdaMaxOut           EonLambda,
+  eonInterfaceCurrentMinIn           EonCurrent,
+  eonInterfaceCurrentMaxIn           EonCurrent,
+  eonInterfaceCurrentMinOut          EonCurrent,
+  eonInterfaceCurrentMaxOut          EonCurrent,
+  eonInterfaceAvailableSlots		 EonSlot,
   eonInterfaceTotalBandwidth         EonBitRate,
   eonInterfaceAvailableBandwidth     EonBitRate,
 }
@@ -90,8 +91,8 @@ eonInterfaceIndex OBJECT-TYPE
         eonInterfaceTable."
    ::= { eonInterfaceEntry 1 }
 
-eonInterfaceLambdaMinIn OBJECT-TYPE
-   SYNTAX        EonLambda
+eonInterfaceCurrentMinIn OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
@@ -99,8 +100,8 @@ eonInterfaceLambdaMinIn OBJECT-TYPE
         Network Node is willing to receive on this interface."
    ::= { eonInterfaceEntry 2 }
 
-eonInterfaceLambdaMaxIn OBJECT-TYPE
-   SYNTAX        EonLambda
+eonInterfaceCurrentMaxIn OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
@@ -108,8 +109,8 @@ eonInterfaceLambdaMaxIn OBJECT-TYPE
         Network Node is willing to receive on this interface."
    ::= { eonInterfaceEntry 3 }
 
-eonInterfaceLambdaMinOut OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInterfaceCurrentMinOut OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
@@ -117,14 +118,22 @@ eonInterfaceLambdaMinOut OBJECT-TYPE
         NetworkNode is willing to send on this interface."
    ::= { eonInterfaceEntry 4 }
 
-eonInterfaceLambdaMaxOut OBJECT-TYPE
-   SYNTAX        EonLambda
+eonInterfaceCurrentMaxOut OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This is the maximum value of an EON Lambda that this
         Network Node is willing to send on this interface."
-   ::= { mplsInterfaceEntry 5 }
+   ::= { eonInterfaceEntry 5 }
+   
+eonInterfaceAvailableSlots OBJECT-TYPE
+	SYNTAX 		EonSlot
+	MAX-ACCESS 	READ-ONLY
+	STATUS 		CURRENT
+	DESCRIPTION
+		"This is the value of available slots in node"
+	::={ eonInterfaceEntry 6}	
 
 eonInterfaceTotalBandwidth OBJECT-TYPE
    SYNTAX        EonBitRate
@@ -138,10 +147,10 @@ eonInterfaceTotalBandwidth OBJECT-TYPE
         applicable when applied to the interface with index
         0. When this value cannot be measured, this value
         should contain the nominal bandwidth."
-::= { eonInterfaceEntry 6 }
+::= { eonInterfaceEntry 7 }
 
 eonInterfaceAvailableBandwidth OBJECT-TYPE
-   SYNTAX        MplsBitRate
+   SYNTAX        EonBitRate
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
@@ -154,7 +163,7 @@ eonInterfaceAvailableBandwidth OBJECT-TYPE
         applicable when applied to the interface with index
         0. When this value cannot be measured, this value
         should contain the nominal bandwidth."
-::= { eonInterfaceEntry 7 }
+::= { eonInterfaceEntry 8 }
 
 
 
@@ -166,7 +175,7 @@ eonInSegmentTable  OBJECT-TYPE
        "This table contains a description of the incoming EON
         waves (lambdas) to an Network Node and their associated parameters.
         The index for this table is eonInSegmentIndex."
-      ::= { eonNodeObjects 2 }
+      ::= { eonNetworkNodeObjects 2 }
 
 eonInSegmentEntry  OBJECT-TYPE
    SYNTAX        EonInSegmentEntry
@@ -184,7 +193,7 @@ eonInSegmentEntry  OBJECT-TYPE
 EonInSegmentEntry ::= SEQUENCE {
   eonInSegmentIndex                	EonIndexType,
   eonInSegmentInterface             InterfaceIndexOrZero,
-  eonInSegmentLambda                EonLambda,
+  eonInSegmentCurrent               EonCurrent,
   eonInSegmentXCIndex               EonIndexType,
   eonInSegmentOwner                 EonOwner,
   eonInSegmentRowStatus             RowStatus,
@@ -216,15 +225,15 @@ eonInSegmentInterface OBJECT-TYPE
         mapping remains the same. If this is not the case,
         then individual entries MUST exist that
         can then be mapped to unique mplsXCEntries."
-   ::= { mplsInSegmentEntry 2 }
+   ::= { eonInSegmentEntry 2 }
 
-eonInSegmentLambda OBJECT-TYPE
-   SYNTAX        EonLambda
+eonInSegmentCurrent OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
      "Object contain incoming lamdba associated with this in-segment."
-   ::= { mplsInSegmentEntry 3 }
+   ::= { eonInSegmentEntry 3 }
 
 
 eonInSegmentXCIndex OBJECT-TYPE
@@ -240,7 +249,7 @@ eonInSegmentXCIndex OBJECT-TYPE
         in-segment is a part of, this object is automatically
         updated to reflect the value of mplsXCIndex of that
         cross-connect entry."
-   ::= { mplsInSegmentEntry 4 }
+   ::= { eonInSegmentEntry 4 }
 
 eonInSegmentOwner OBJECT-TYPE
    SYNTAX        EonOwner
@@ -272,7 +281,7 @@ eonOutSegmentTable  OBJECT-TYPE
    DESCRIPTION
        "This table contains a representation of the outgoing
         segments from an Network Node."
-   ::= { eonNodeObjects 3 }
+   ::= { eonNetworkNodeObjects 3 }
 
 
 eonOutSegmentEntry  OBJECT-TYPE
@@ -302,7 +311,7 @@ eonOutSegmentEntry  OBJECT-TYPE
 EonOutSegmentEntry ::= SEQUENCE {
   eonOutSegmentIndex                EonIndexType,
   eonOutSegmentInterface            InterfaceIndexOrZero,
-  eonOutSegmentLambda	            MplsLambda,
+  eonOutSegmentCurrent	            EonCurent,
   eonOutSegmentXCIndex              EonIndexType,
   eonOutSegmentOwner                EonOwner,
   eonOutSegmentRowStatus            RowStatus,
@@ -336,8 +345,8 @@ eonOutSegmentInterface OBJECT-TYPE
         a valid ifEntry."
    ::= { eonOutSegmentEntry 2 }
 
-eonOutSegmentLambda OBJECT-TYPE
-   SYNTAX        MplsLambda
+eonOutSegmentCurrent OBJECT-TYPE
+   SYNTAX        EonCurrent
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
@@ -391,7 +400,7 @@ eonXCTable  OBJECT-TYPE
         between Network Node.  It supports point-to-point,
         point-to-multipoint and multipoint-to-point
         connections.
-   ::= { eonNodeObjects 4 }
+   ::= { eonNetworkNodeObjects 4 }
 
 eonXCEntry  OBJECT-TYPE
    SYNTAX        EonXCEntry
@@ -438,7 +447,7 @@ eonXCInSegmentIndex OBJECT-TYPE
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
-       "Incoming lambda index."
+       "Incoming current index."
    ::= { eonXCEntry 2 }
 
 eonXCOutSegmentIndex OBJECT-TYPE
@@ -450,7 +459,7 @@ eonXCOutSegmentIndex OBJECT-TYPE
    ::= { eonXCEntry 3 }
 
 eonXCLspId OBJECT-TYPE
-   SYNTAX        EonLambdaPathID
+   SYNTAX        EonCurrentPathID
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
