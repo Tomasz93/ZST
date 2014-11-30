@@ -1,5 +1,20 @@
 EON-LSR-STD-MIB DEFINITIONS ::= BEGIN
-
+IMPORTS
+	MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+	Integer32, Counter32, Unsigned32, Counter64, Gauge32,zeroDotZero		FROM SNMPv2-SMI
+   
+   MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP				    	FROM SNMPv2-CONF                                   
+ 
+	TruthValue, RowStatus, StorageType, RowPointer,
+	TimeStamp, TEXTUAL-CONVENTION											FROM SNMPv2-TC                                     
+	
+	InterfaceIndexOrZero, ifGeneralInformationGroup,
+	ifCounterDiscontinuityGroup											    FROM IF-MIB                                        
+   
+	eonStdMIB, EonLSPID, EonLabel, EonBitRate,EonOwner					    FROM EON-TC-STD-MIB                               
+	AddressFamilyNumbers												    FROM IANA-ADDRESS-FAMILY-NUMBERS-MIB              
+	InetAddress, InetAddressType											FROM INET-ADDRESS-MIB;
+	  
 eonLsrStdMIB MODULE-IDENTITY
    LAST-UPDATED "201411290000Z"  -- November 29, 2014
    ORGANIZATION "Elastic Optical Network (EON) Working Group"
