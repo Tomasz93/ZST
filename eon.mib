@@ -27,7 +27,7 @@ eonLsrStdMIB MODULE-IDENTITY
 
 -- TEXTUAL-CONVENTIONs
 
-MplsIndexType ::= TEXTUAL-CONVENTION
+EonIndexType ::= TEXTUAL-CONVENTION
    STATUS              current
    DESCRIPTION
        "This is an octet string that can be used as a table
@@ -42,25 +42,25 @@ MplsIndexType ::= TEXTUAL-CONVENTION
         MUST specify if this special value is valid and if so
         what the special meaning is.
 
-        In systems that provide write access to the MPLS-LSR-STD
-        MIB, mplsIndexType SHOULD be used as a simple multi-digit
+        In systems that provide write access to the EON-LSR-STD
+        MIB, eonIndexType SHOULD be used as a simple multi-digit
         integer encoded as an octet string.
         No further overloading of the meaning of an index SHOULD
         be made.
 
-        In systems that do not offer write access to the MPLS-LSR-STD
-        MIB, the mplsIndexType may contain implicit formatting that is
+        In systems that do not offer write access to the EON-LSR-STD
+        MIB, the eonIndexType may contain implicit formatting that is
         specific to the implementation to convey additional
         information such as interface index, physical card or
         device, or application id. The interpretation of this
         additional formatting is implementation dependent and
         not covered in this document. Such formatting MUST
         NOT impact the basic functionality of read-only access
-        to the MPLS-LSR-STD MIB by management applications that are
+        to the EON-LSR-STD MIB by management applications that are
         not aware of the formatting rules."
    SYNTAX              OCTET STRING (SIZE(1..24))
 
-MplsIndexNextType ::= TEXTUAL-CONVENTION
+EonIndexNextType ::= TEXTUAL-CONVENTION
    STATUS              current
    DESCRIPTION
        "When a MIB module is used for configuration, an object with
@@ -93,36 +93,36 @@ MplsIndexNextType ::= TEXTUAL-CONVENTION
 -- Top level components of this MIB module.
 
 -- Notifications
-mplsLsrNotifications OBJECT IDENTIFIER ::= { mplsLsrStdMIB 0 }
+eonLsrNotifications OBJECT IDENTIFIER ::= { eonLsrStdMIB 0 }
 
 -- Tables, Scalars
-mplsLsrObjects       OBJECT IDENTIFIER ::= { mplsLsrStdMIB 1 }
+eonLsrObjects       OBJECT IDENTIFIER ::= { eonLsrStdMIB 1 }
 
 -- Conformance
-mplsLsrConformance   OBJECT IDENTIFIER ::= { mplsLsrStdMIB 2 }
+eonLsrConformance   OBJECT IDENTIFIER ::= { eonLsrStdMIB 2 }
 
--- MPLS Interface Table.
-mplsInterfaceTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsInterfaceEntry
+-- EON Interface Table.
+eonInterfaceTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonInterfaceEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
-       "This table specifies per-interface MPLS capability
+       "This table specifies per-interface EON capability
         and associated information."
-   ::= { mplsLsrObjects 1 }
+   ::= { eonLsrObjects 1 }
 
-mplsInterfaceEntry OBJECT-TYPE
-   SYNTAX        MplsInterfaceEntry
+eonInterfaceEntry OBJECT-TYPE
+   SYNTAX        EonInterfaceEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "A conceptual row in this table is created
         automatically by an LSR for every interface capable
-        of supporting MPLS and which is configured to do so.
+        of supporting EON and which is configured to do so.
         A conceptual row in this table will exist if and only if
         a corresponding entry in ifTable exists with ifType =
-        mpls(166). If this associated entry in ifTable is
-        operationally disabled (thus removing MPLS
+        eon(166). If this associated entry in ifTable is
+        operationally disabled (thus removing EON
         capabilities on that interface), the corresponding
         entry in this table MUST be deleted shortly thereafter.
         An conceptual row with index 0 is created if the LSR
@@ -130,89 +130,89 @@ mplsInterfaceEntry OBJECT-TYPE
         represents the per-platform label space and contains
         parameters that apply to all interfaces that participate
         in the per-platform label space. Other conceptual rows
-        in this table represent MPLS interfaces that may
+        in this table represent EON interfaces that may
         participate in either the per-platform or per-
         interface label spaces, or both.  Implementations
         that either only support per-platform labels,
         or have only them configured, may choose to return
-        just the mplsInterfaceEntry of 0 and not return
+        just the eonInterfaceEntry of 0 and not return
         the other rows. This will greatly reduce the number
         of objects returned. Further information about label
         space participation of an interface is provided in
         the DESCRIPTION clause of
-        mplsInterfaceLabelParticipationType."
-   INDEX { mplsInterfaceIndex }
-   ::= { mplsInterfaceTable 1 }
+        eonInterfaceLabelParticipationType."
+   INDEX { eonInterfaceIndex }
+   ::= { eonInterfaceTable 1 }
 
-MplsInterfaceEntry ::= SEQUENCE {
-  mplsInterfaceIndex                  InterfaceIndexOrZero,
-  mplsInterfaceLabelMinIn             MplsLabel,
-  mplsInterfaceLabelMaxIn             MplsLabel,
-  mplsInterfaceLabelMinOut            MplsLabel,
-  mplsInterfaceLabelMaxOut            MplsLabel,
-  mplsInterfaceTotalBandwidth         MplsBitRate,
-  mplsInterfaceAvailableBandwidth     MplsBitRate,
-  mplsInterfaceLabelParticipationType BITS
+EonInterfaceEntry ::= SEQUENCE {
+  eonInterfaceIndex                  InterfaceIndexOrZero,
+  eonInterfaceLabelMinIn             EonLabel,
+  eonInterfaceLabelMaxIn             EonLabel,
+  eonInterfaceLabelMinOut            EonLabel,
+  eonInterfaceLabelMaxOut            EonLabel,
+  eonInterfaceTotalBandwidth         EonBitRate,
+  eonInterfaceAvailableBandwidth     EonBitRate,
+  eonInterfaceLabelParticipationType BITS
 }
 
-mplsInterfaceIndex OBJECT-TYPE
+eonInterfaceIndex OBJECT-TYPE
    SYNTAX        InterfaceIndexOrZero
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This is a unique index for an entry in the
-        MplsInterfaceTable.  A non-zero index for an
+        EonInterfaceTable.  A non-zero index for an
         entry indicates the ifIndex for the corresponding
-        interface entry of the MPLS-layer in the ifTable.
+        interface entry of the EON-layer in the ifTable.
         The entry with index 0 represents the per-platform
         label space and contains parameters that apply to all
         interfaces that participate in the per-platform label
         space. Other entries defined in this table represent
-        additional MPLS interfaces that may participate in either
+        additional EON interfaces that may participate in either
         the per-platform or per-interface label spaces, or both."
    REFERENCE
        "RFC 2863 - The Interfaces Group MIB, McCloghrie, K.,
         and F. Kastenholtz, June 2000"
-   ::= { mplsInterfaceEntry 1 }
+   ::= { eonInterfaceEntry 1 }
 
-mplsInterfaceLabelMinIn OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInterfaceLabelMinIn OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "This is the minimum value of an MPLS label that this
+       "This is the minimum value of an EON label that this
         LSR is willing to receive on this interface."
-   ::= { mplsInterfaceEntry 2 }
+   ::= { eonInterfaceEntry 2 }
 
-mplsInterfaceLabelMaxIn OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInterfaceLabelMaxIn OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "This is the maximum value of an MPLS label that this
+       "This is the maximum value of an EON label that this
         LSR is willing to receive on this interface."
-   ::= { mplsInterfaceEntry 3 }
+   ::= { eonInterfaceEntry 3 }
 
-mplsInterfaceLabelMinOut OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInterfaceLabelMinOut OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "This is the minimum value of an MPLS label that this
+       "This is the minimum value of an EON label that this
         LSR is willing to send on this interface."
-   ::= { mplsInterfaceEntry 4 }
+   ::= { eonInterfaceEntry 4 }
 
-mplsInterfaceLabelMaxOut OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInterfaceLabelMaxOut OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "This is the maximum value of an MPLS label that this
+       "This is the maximum value of an EON label that this
         LSR is willing to send on this interface."
-   ::= { mplsInterfaceEntry 5 }
+   ::= { eonInterfaceEntry 5 }
 
-mplsInterfaceTotalBandwidth OBJECT-TYPE
-   SYNTAX        MplsBitRate
+eonInterfaceTotalBandwidth OBJECT-TYPE
+   SYNTAX        EonBitRate
    UNITS         "kilobits per second"
    MAX-ACCESS    read-only
    STATUS        current
@@ -223,10 +223,10 @@ mplsInterfaceTotalBandwidth OBJECT-TYPE
         applicable when applied to the interface with index
         0. When this value cannot be measured, this value
         should contain the nominal bandwidth."
-::= { mplsInterfaceEntry 6 }
+::= { eonInterfaceEntry 6 }
 
-mplsInterfaceAvailableBandwidth OBJECT-TYPE
-   SYNTAX        MplsBitRate
+eonInterfaceAvailableBandwidth OBJECT-TYPE
+   SYNTAX        EonBitRate
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
@@ -235,13 +235,13 @@ mplsInterfaceAvailableBandwidth OBJECT-TYPE
         specified in kilobits per second (Kbps).  This value
         is calculated as the difference between the amount
         of bandwidth currently in use and that specified in
-        mplsInterfaceTotalBandwidth.  This variable is not
+        eonInterfaceTotalBandwidth.  This variable is not
         applicable when applied to the interface with index
         0. When this value cannot be measured, this value
         should contain the nominal bandwidth."
-::= { mplsInterfaceEntry 7 }
+::= { eonInterfaceEntry 7 }
 
-mplsInterfaceLabelParticipationType OBJECT-TYPE
+eonInterfaceLabelParticipationType OBJECT-TYPE
    SYNTAX  BITS {
                   perPlatform (0),
                   perInterface (1)
@@ -249,7 +249,7 @@ mplsInterfaceLabelParticipationType OBJECT-TYPE
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "If the value of the mplsInterfaceIndex for this
+       "If the value of the eonInterfaceIndex for this
         entry is zero, then this entry corresponds to the
         per-platform label space for all interfaces configured
         to use that label space. In this case the perPlatform(0)
@@ -257,18 +257,18 @@ mplsInterfaceLabelParticipationType OBJECT-TYPE
         and MUST be ignored.
 
         The remainder of this description applies to entries
-        with a non-zero value of mplsInterfaceIndex.
+        with a non-zero value of eonInterfaceIndex.
 
         If the perInterface(1) bit is set then the value of
-        mplsInterfaceLabelMinIn, mplsInterfaceLabelMaxIn,
-        mplsInterfaceLabelMinOut, and
-        mplsInterfaceLabelMaxOut for this entry reflect the
+        eonInterfaceLabelMinIn, eonInterfaceLabelMaxIn,
+        eonInterfaceLabelMinOut, and
+        eonInterfaceLabelMaxOut for this entry reflect the
         label ranges for this interface.
 
         If only the perPlatform(0) bit is set, then the value of
-        mplsInterfaceLabelMinIn, mplsInterfaceLabelMaxIn,
-        mplsInterfaceLabelMinOut, and
-        mplsInterfaceLabelMaxOut for this entry MUST be
+        eonInterfaceLabelMinIn, eonInterfaceLabelMaxIn,
+        eonInterfaceLabelMinOut, and
+        eonInterfaceLabelMaxOut for this entry MUST be
         identical to the instance of these objects with
         index 0.  These objects may only vary from the entry
         with index 0 if both the perPlatform(0) and perInterface(1)
@@ -284,47 +284,47 @@ mplsInterfaceLabelParticipationType OBJECT-TYPE
        "Rosen, E., Viswanathan, A., and R. Callon,
         Multiprotocol Label Switching Architecture, RFC
         3031, January 2001."
-::= { mplsInterfaceEntry 8 }
+::= { eonInterfaceEntry 8 }
 
--- End of mplsInterfaceTable
+-- End of eonInterfaceTable
 
 
--- MPLS Interface Performance Table.
+-- EON Interface Performance Table.
 
-mplsInterfacePerfTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsInterfacePerfEntry
+eonInterfacePerfTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonInterfacePerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
-       "This table provides MPLS performance information on
+       "This table provides EON performance information on
         a per-interface basis."
-   ::= { mplsLsrObjects 2 }
+   ::= { eonLsrObjects 2 }
 
-mplsInterfacePerfEntry OBJECT-TYPE
-   SYNTAX        MplsInterfacePerfEntry
+eonInterfacePerfEntry OBJECT-TYPE
+   SYNTAX        EonInterfacePerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "An entry in this table is created by the LSR for
-        every interface capable of supporting MPLS.  Its is
-        an extension to the mplsInterfaceEntry table.
+        every interface capable of supporting EON.  Its is
+        an extension to the eonInterfaceEntry table.
         Note that the discontinuity behavior of entries in
         this table MUST be based on the corresponding
         ifEntry's ifDiscontinuityTime."
-   AUGMENTS      { mplsInterfaceEntry }
-      ::= { mplsInterfacePerfTable 1 }
+   AUGMENTS      { eonInterfaceEntry }
+      ::= { eonInterfacePerfTable 1 }
 
-MplsInterfacePerfEntry ::= SEQUENCE {
+EonInterfacePerfEntry ::= SEQUENCE {
       -- incoming direction
-      mplsInterfacePerfInLabelsInUse         Gauge32,
-      mplsInterfacePerfInLabelLookupFailures Counter32,
+      eonInterfacePerfInLabelsInUse         Gauge32,
+      eonInterfacePerfInLabelLookupFailures Counter32,
 
       -- outgoing direction
-      mplsInterfacePerfOutLabelsInUse      Gauge32,
-      mplsInterfacePerfOutFragmentedPkts   Counter32
+      eonInterfacePerfOutLabelsInUse      Gauge32,
+      eonInterfacePerfOutFragmentedPkts   Counter32
    }
 
-mplsInterfacePerfInLabelsInUse OBJECT-TYPE
+eonInterfacePerfInLabelsInUse OBJECT-TYPE
    SYNTAX        Gauge32
    MAX-ACCESS    read-only
    STATUS        current
@@ -339,9 +339,9 @@ mplsInterfacePerfInLabelsInUse OBJECT-TYPE
         space, then the instance of this object MUST
         represent the number of per-interface labels that
         are in use on this interface."
-   ::= { mplsInterfacePerfEntry 1 }
+   ::= { eonInterfacePerfEntry 1 }
 
-mplsInterfacePerfInLabelLookupFailures  OBJECT-TYPE
+eonInterfacePerfInLabelLookupFailures  OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
@@ -352,9 +352,9 @@ mplsInterfacePerfInLabelLookupFailures  OBJECT-TYPE
         connect entry. This object MUST count on a per-
         interface basis regardless of which label space the
         interface participates in."
-   ::= { mplsInterfacePerfEntry 2 }
+   ::= { eonInterfacePerfEntry 2 }
 
-mplsInterfacePerfOutLabelsInUse OBJECT-TYPE
+eonInterfacePerfOutLabelsInUse OBJECT-TYPE
    SYNTAX        Gauge32
    MAX-ACCESS    read-only
    STATUS        current
@@ -364,158 +364,158 @@ mplsInterfacePerfOutLabelsInUse OBJECT-TYPE
         point in time on this interface. This object MUST
         count on a per-interface basis regardless of which
         label space the interface participates in."
-   ::= { mplsInterfacePerfEntry 3 }
+   ::= { eonInterfacePerfEntry 3 }
 
-mplsInterfacePerfOutFragmentedPkts OBJECT-TYPE
+eonInterfacePerfOutFragmentedPkts OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "This object counts the number of outgoing MPLS
+       "This object counts the number of outgoing EON
         packets that required fragmentation before
         transmission on this interface. This object MUST
         count on a per-interface basis regardless of which
         label space the interface participates in."
-::= { mplsInterfacePerfEntry 4 }
+::= { eonInterfacePerfEntry 4 }
 
--- mplsInterfacePerf Table end.
+-- eonInterfacePerf Table end.
 
-mplsInSegmentIndexNext OBJECT-TYPE
-   SYNTAX        MplsIndexNextType
+eonInSegmentIndexNext OBJECT-TYPE
+   SYNTAX        EonIndexNextType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This object contains the next available value to
-        be used for mplsInSegmentIndex when creating entries
-        in the mplsInSegmentTable. The special value of a
+        be used for eonInSegmentIndex when creating entries
+        in the eonInSegmentTable. The special value of a
         string containing the single octet 0x00 indicates
         that no new entries can be created in this table.
         Agents not allowing managers to create entries
         in this table MUST set this object to this special
         value."
-      ::= { mplsLsrObjects 3 }
+      ::= { eonLsrObjects 3 }
 
 -- in-segment table.
-mplsInSegmentTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsInSegmentEntry
+eonInSegmentTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonInSegmentEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
-       "This table contains a description of the incoming MPLS
+       "This table contains a description of the incoming EON
         segments (labels) to an LSR and their associated parameters.
-        The index for this table is mplsInSegmentIndex.
+        The index for this table is eonInSegmentIndex.
         The index structure of this table is specifically designed
-        to handle many different MPLS implementations that manage
+        to handle many different EON implementations that manage
         their labels both in a distributed and centralized manner.
-        The table is also designed to handle existing MPLS labels
+        The table is also designed to handle existing EON labels
         as defined in RFC3031 as well as longer ones that may
         be necessary in the future.
 
         In cases where the label cannot fit into the
-        mplsInSegmentLabel object, the mplsInSegmentLabelPtr
+        eonInSegmentLabel object, the eonInSegmentLabelPtr
         will indicate this by being set to the first accessible
         column in the appropriate extension table's row.
         In this case an additional table MUST
         be provided and MUST be indexed by at least the indexes
         used by this table. In all other cases when the label is
-        represented within the mplsInSegmentLabel object, the
-        mplsInSegmentLabelPtr MUST be set to 0.0. Due to the
-        fact that MPLS labels may not exceed 24 bits, the
-        mplsInSegmentLabelPtr object is only a provision for
+        represented within the eonInSegmentLabel object, the
+        eonInSegmentLabelPtr MUST be set to 0.0. Due to the
+        fact that EON labels may not exceed 24 bits, the
+        eonInSegmentLabelPtr object is only a provision for
         future-proofing the MIB module. Thus, the definition
         of any extension tables is beyond the scope of this
         MIB module."
-      ::= { mplsLsrObjects 4 }
+      ::= { eonLsrObjects 4 }
 
-mplsInSegmentEntry  OBJECT-TYPE
-   SYNTAX        MplsInSegmentEntry
+eonInSegmentEntry  OBJECT-TYPE
+   SYNTAX        EonInSegmentEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "An entry in this table represents one incoming
         segment as is represented in an LSR's LFIB.
         An entry can be created by a network
-        administrator or an SNMP agent, or an MPLS signaling
+        administrator or an SNMP agent, or an EON signaling
         protocol.  The creator of the entry is denoted by
-        mplsInSegmentOwner.
-        The value of mplsInSegmentRowStatus cannot be active(1)
+        eonInSegmentOwner.
+        The value of eonInSegmentRowStatus cannot be active(1)
         unless the ifTable entry corresponding to
-        mplsInSegmentInterface exists.  An entry in this table
+        eonInSegmentInterface exists.  An entry in this table
         must match any incoming packets, and indicates an
-        instance of mplsXCEntry based on which forwarding
+        instance of eonXCEntry based on which forwarding
         and/or switching actions are taken."
-   INDEX { mplsInSegmentIndex }
-   ::= { mplsInSegmentTable 1 }
+   INDEX { eonInSegmentIndex }
+   ::= { eonInSegmentTable 1 }
 
-MplsInSegmentEntry ::= SEQUENCE {
-  mplsInSegmentIndex                MplsIndexType,
-  mplsInSegmentInterface            InterfaceIndexOrZero,
-  mplsInSegmentLabel                MplsLabel,
-  mplsInSegmentLabelPtr             RowPointer,
-  mplsInSegmentNPop                 Integer32,
-  mplsInSegmentAddrFamily           AddressFamilyNumbers,
-  mplsInSegmentXCIndex              MplsIndexType,
-  mplsInSegmentOwner                MplsOwner ,
-  mplsInSegmentTrafficParamPtr      RowPointer,
-  mplsInSegmentRowStatus            RowStatus,
-  mplsInSegmentStorageType          StorageType
+EonInSegmentEntry ::= SEQUENCE {
+  eonInSegmentIndex                EonIndexType,
+  eonInSegmentInterface            InterfaceIndexOrZero,
+  eonInSegmentLabel                EonLabel,
+  eonInSegmentLabelPtr             RowPointer,
+  eonInSegmentNPop                 Integer32,
+  eonInSegmentAddrFamily           AddressFamilyNumbers,
+  eonInSegmentXCIndex              EonIndexType,
+  eonInSegmentOwner                EonOwner ,
+  eonInSegmentTrafficParamPtr      RowPointer,
+  eonInSegmentRowStatus            RowStatus,
+  eonInSegmentStorageType          StorageType
 }
 
-mplsInSegmentIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonInSegmentIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "The index for this in-segment. The
         string containing the single octet 0x00
         MUST not be used as an index."
-   ::= { mplsInSegmentEntry 1 }
+   ::= { eonInSegmentEntry 1 }
 
-mplsInSegmentInterface OBJECT-TYPE
+eonInSegmentInterface OBJECT-TYPE
    SYNTAX        InterfaceIndexOrZero
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "This object represents the
-        interface index for the incoming MPLS interface.  A
+        interface index for the incoming EON interface.  A
         value of zero represents all interfaces participating in
         the per-platform label space.  This may only be used
         in cases where the incoming interface and label
-        are associated with the same mplsXCEntry. Specifically,
+        are associated with the same eonXCEntry. Specifically,
         given a label and any incoming interface pair from the
         per-platform label space, the outgoing label/interface
         mapping remains the same. If this is not the case,
         then individual entries MUST exist that
-        can then be mapped to unique mplsXCEntries."
-   ::= { mplsInSegmentEntry 2 }
+        can then be mapped to unique eonXCEntries."
+   ::= { eonInSegmentEntry 2 }
 
-mplsInSegmentLabel OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInSegmentLabel OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
-     "If the corresponding instance of mplsInSegmentLabelPtr is
+     "If the corresponding instance of eonInSegmentLabelPtr is
       zeroDotZero then this object MUST contain the incoming label
       associated with this in-segment. If not this object SHOULD
       be zero and MUST be ignored."
-   ::= { mplsInSegmentEntry 3 }
+   ::= { eonInSegmentEntry 3 }
 
-mplsInSegmentLabelPtr OBJECT-TYPE
+eonInSegmentLabelPtr OBJECT-TYPE
    SYNTAX        RowPointer
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "If the label for this segment cannot be represented
-        fully within the mplsInSegmentLabel object,
+        fully within the eonInSegmentLabel object,
         this object MUST point to the first accessible
         column of a conceptual row in an external table containing
-        the label.  In this case, the mplsInSegmentTopLabel
+        the label.  In this case, the eonInSegmentTopLabel
         object SHOULD be set to 0 and ignored. This object MUST
         be set to zeroDotZero otherwise."
    DEFVAL { zeroDotZero }
-   ::= { mplsInSegmentEntry 4 }
+   ::= { eonInSegmentEntry 4 }
 
-mplsInSegmentNPop OBJECT-TYPE
+eonInSegmentNPop OBJECT-TYPE
    SYNTAX        Integer32 (1..2147483647)
    MAX-ACCESS    read-create
    STATUS        current
@@ -527,11 +527,11 @@ mplsInSegmentNPop OBJECT-TYPE
         object to the default value of 1. If an LSR supports
         popping of more than one label, this object MUST
         be set to that number. This object cannot be modified
-        if mplsInSegmentRowStatus is active(1)."
+        if eonInSegmentRowStatus is active(1)."
    DEFVAL        { 1 }
-   ::= { mplsInSegmentEntry 5 }
+   ::= { eonInSegmentEntry 5 }
 
-mplsInSegmentAddrFamily OBJECT-TYPE
+eonInSegmentAddrFamily OBJECT-TYPE
    SYNTAX        AddressFamilyNumbers
    MAX-ACCESS    read-create
    STATUS        current
@@ -542,7 +542,7 @@ mplsInSegmentAddrFamily OBJECT-TYPE
         A value of other(0) indicates that the family type is
         either unknown or undefined; this SHOULD NOT be used
         at an egress LSR. This object cannot be
-        modified if mplsInSegmentRowStatus is active(1)."
+        modified if eonInSegmentRowStatus is active(1)."
    REFERENCE
        "Internet Assigned Numbers Authority (IANA), ADDRESS
         FAMILY NUMBERS, (http://www.iana.org/assignments/
@@ -551,33 +551,33 @@ mplsInSegmentAddrFamily OBJECT-TYPE
         ianaaddressfamilynumbers-mib
 "
    DEFVAL        { other }
-   ::= { mplsInSegmentEntry 6 }
+   ::= { eonInSegmentEntry 6 }
 
-mplsInSegmentXCIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonInSegmentXCIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "Index into mplsXCTable which identifies which cross-
+       "Index into eonXCTable which identifies which cross-
         connect entry this segment is part of.  The string
         containing the single octet 0x00 indicates that this
         entry is not referred to by any cross-connect entry.
         When a cross-connect entry is created which this
         in-segment is a part of, this object is automatically
-        updated to reflect the value of mplsXCIndex of that
+        updated to reflect the value of eonXCIndex of that
         cross-connect entry."
-   ::= { mplsInSegmentEntry 7 }
+   ::= { eonInSegmentEntry 7 }
 
-mplsInSegmentOwner OBJECT-TYPE
-   SYNTAX        MplsOwner
+eonInSegmentOwner OBJECT-TYPE
+   SYNTAX        EonOwner
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Denotes the entity that created and is responsible
         for managing this segment."
-   ::= { mplsInSegmentEntry 8 }
+   ::= { eonInSegmentEntry 8 }
 
-mplsInSegmentTrafficParamPtr OBJECT-TYPE
+eonInSegmentTrafficParamPtr OBJECT-TYPE
    SYNTAX            RowPointer
    MAX-ACCESS        read-create
    STATUS            current
@@ -585,7 +585,7 @@ mplsInSegmentTrafficParamPtr OBJECT-TYPE
      "This variable represents a pointer to the traffic
       parameter specification for this in-segment.  This
       value may point at an entry in the
-      mplsTunnelResourceTable in the MPLS-TE-STD-MIB (RFC3812)
+      eonTunnelResourceTable in the EON-TE-STD-MIB (RFC3812)
       to indicate which traffic parameter settings for this
       segment if it represents an LSP used for a TE tunnel.
 
@@ -596,15 +596,15 @@ mplsInSegmentTrafficParamPtr OBJECT-TYPE
       two or more segments can indicate resource sharing
       of such things as LSP queue space, etc.
 
-      This object cannot be modified if mplsInSegmentRowStatus
+      This object cannot be modified if eonInSegmentRowStatus
       is active(1).  For entries in this table that
       are preserved after a re-boot, the agent MUST ensure
       that their integrity be preserved, or this object should
       be set to 0.0 if it cannot."
    DEFVAL { zeroDotZero }
-   ::= { mplsInSegmentEntry 9 }
+   ::= { eonInSegmentEntry 9 }
 
-mplsInSegmentRowStatus OBJECT-TYPE
+eonInSegmentRowStatus OBJECT-TYPE
    SYNTAX        RowStatus
    MAX-ACCESS    read-create
    STATUS        current
@@ -613,10 +613,10 @@ mplsInSegmentRowStatus OBJECT-TYPE
         delete a row in this table. When a row in this
         table has a row in the active(1) state, no
         objects in this row can be modified except the
-        mplsInSegmentRowStatus and mplsInSegmentStorageType."
-   ::= { mplsInSegmentEntry 10 }
+        eonInSegmentRowStatus and eonInSegmentStorageType."
+   ::= { eonInSegmentEntry 10 }
 
-mplsInSegmentStorageType OBJECT-TYPE
+eonInSegmentStorageType OBJECT-TYPE
    SYNTAX        StorageType
    MAX-ACCESS    read-create
    STATUS        current
@@ -624,56 +624,56 @@ mplsInSegmentStorageType OBJECT-TYPE
        "This variable indicates the storage type for this
         object. The agent MUST ensure that this object's
         value remains consistent with the associated
-        mplsXCEntry. Conceptual rows having the value
+        eonXCEntry. Conceptual rows having the value
         'permanent' need not allow write-access to any
         columnar objects in the row."
    REFERENCE
         "See RFC2579."
    DEFVAL { volatile }
-   ::= { mplsInSegmentEntry 11 }
+   ::= { eonInSegmentEntry 11 }
 
--- End of mplsInSegmentTable
+-- End of eonInSegmentTable
 
 -- in-segment performance table.
 
-mplsInSegmentPerfTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsInSegmentPerfEntry
+eonInSegmentPerfTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonInSegmentPerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This table contains statistical information for
-        incoming MPLS segments to an LSR."
-   ::= { mplsLsrObjects 5 }
+        incoming EON segments to an LSR."
+   ::= { eonLsrObjects 5 }
 
-mplsInSegmentPerfEntry  OBJECT-TYPE
-   SYNTAX        MplsInSegmentPerfEntry
+eonInSegmentPerfEntry  OBJECT-TYPE
+   SYNTAX        EonInSegmentPerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "An entry in this table contains statistical
         information about one incoming segment which is
-        configured in the mplsInSegmentTable. The counters
+        configured in the eonInSegmentTable. The counters
         in this entry should behave in a manner similar to
         that of the interface.
-        mplsInSegmentPerfDiscontinuityTime indicates the
+        eonInSegmentPerfDiscontinuityTime indicates the
         time of the last discontinuity in all of these
         objects."
-   AUGMENTS  { mplsInSegmentEntry }
-   ::= { mplsInSegmentPerfTable 1 }
+   AUGMENTS  { eonInSegmentEntry }
+   ::= { eonInSegmentPerfTable 1 }
 
-MplsInSegmentPerfEntry ::= SEQUENCE {
-    mplsInSegmentPerfOctets             Counter32,
-    mplsInSegmentPerfPackets            Counter32,
-    mplsInSegmentPerfErrors             Counter32,
-    mplsInSegmentPerfDiscards           Counter32,
+EonInSegmentPerfEntry ::= SEQUENCE {
+    eonInSegmentPerfOctets             Counter32,
+    eonInSegmentPerfPackets            Counter32,
+    eonInSegmentPerfErrors             Counter32,
+    eonInSegmentPerfDiscards           Counter32,
 
     -- high capacity counter
-    mplsInSegmentPerfHCOctets           Counter64,
+    eonInSegmentPerfHCOctets           Counter64,
 
-    mplsInSegmentPerfDiscontinuityTime  TimeStamp
+    eonInSegmentPerfDiscontinuityTime  TimeStamp
    }
 
-mplsInSegmentPerfOctets OBJECT-TYPE
+eonInSegmentPerfOctets OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
@@ -681,29 +681,29 @@ mplsInSegmentPerfOctets OBJECT-TYPE
        "This value represents the total number of octets
         received by this segment. It MUST be equal to the
         least significant 32 bits of
-        mplsInSegmentPerfHCOctets
-        if mplsInSegmentPerfHCOctets is supported according to
+        eonInSegmentPerfHCOctets
+        if eonInSegmentPerfHCOctets is supported according to
         the rules spelled out in RFC2863."
-   ::= { mplsInSegmentPerfEntry 1 }
+   ::= { eonInSegmentPerfEntry 1 }
 
-mplsInSegmentPerfPackets OBJECT-TYPE
+eonInSegmentPerfPackets OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Total number of packets received by this segment."
-   ::= { mplsInSegmentPerfEntry 2 }
+   ::= { eonInSegmentPerfEntry 2 }
 
-mplsInSegmentPerfErrors OBJECT-TYPE
+eonInSegmentPerfErrors OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "The number of errored packets received on this
         segment."
-   ::= { mplsInSegmentPerfEntry 3 }
+   ::= { eonInSegmentPerfEntry 3 }
 
-mplsInSegmentPerfDiscards OBJECT-TYPE
+eonInSegmentPerfDiscards OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
@@ -714,20 +714,20 @@ mplsInSegmentPerfDiscards OBJECT-TYPE
         being transmitted.  One possible reason for
         discarding such a labeled packet could be to free up
         buffer space."
-   ::= { mplsInSegmentPerfEntry 4 }
+   ::= { eonInSegmentPerfEntry 4 }
 
-mplsInSegmentPerfHCOctets OBJECT-TYPE
+eonInSegmentPerfHCOctets OBJECT-TYPE
    SYNTAX        Counter64
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "The total number of octets received.  This is the 64
-        bit version of mplsInSegmentPerfOctets,
-        if mplsInSegmentPerfHCOctets is supported according to
+        bit version of eonInSegmentPerfOctets,
+        if eonInSegmentPerfHCOctets is supported according to
         the rules spelled out in RFC2863."
-   ::= { mplsInSegmentPerfEntry 5 }
+   ::= { eonInSegmentPerfEntry 5 }
 
-mplsInSegmentPerfDiscontinuityTime OBJECT-TYPE
+eonInSegmentPerfDiscontinuityTime OBJECT-TYPE
    SYNTAX      TimeStamp
    MAX-ACCESS  read-only
    STATUS      current
@@ -738,52 +738,52 @@ mplsInSegmentPerfDiscontinuityTime OBJECT-TYPE
         discontinuities have occurred since the last re-
         initialization of the local management subsystem,
         then this object contains a zero value."
-   ::= { mplsInSegmentPerfEntry 6 }
+   ::= { eonInSegmentPerfEntry 6 }
 
--- End of mplsInSegmentPerfTable.
+-- End of eonInSegmentPerfTable.
 
 -- out-segment table.
 
-mplsOutSegmentIndexNext OBJECT-TYPE
-   SYNTAX        MplsIndexNextType
+eonOutSegmentIndexNext OBJECT-TYPE
+   SYNTAX        EonIndexNextType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This object contains the next available value to
-        be used for mplsOutSegmentIndex when creating entries
-        in the mplsOutSegmentTable. The special value of a
+        be used for eonOutSegmentIndex when creating entries
+        in the eonOutSegmentTable. The special value of a
         string containing the single octet 0x00
         indicates that no new entries can be created in this
         table. Agents not allowing managers to create entries
         in this table MUST set this object to this special
         value."
-   ::= { mplsLsrObjects 6 }
+   ::= { eonLsrObjects 6 }
 
-mplsOutSegmentTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsOutSegmentEntry
+eonOutSegmentTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonOutSegmentEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This table contains a representation of the outgoing
         segments from an LSR."
-   ::= { mplsLsrObjects 7 }
+   ::= { eonLsrObjects 7 }
 
-mplsOutSegmentEntry  OBJECT-TYPE
-   SYNTAX        MplsOutSegmentEntry
+eonOutSegmentEntry  OBJECT-TYPE
+   SYNTAX        EonOutSegmentEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "An entry in this table represents one outgoing
         segment.  An entry can be created by a network
-        administrator, an SNMP agent, or an MPLS signaling
-        protocol.  The object mplsOutSegmentOwner indicates
+        administrator, an SNMP agent, or an EON signaling
+        protocol.  The object eonOutSegmentOwner indicates
         the creator of this entry. The value of
-        mplsOutSegmentRowStatus cannot be active(1) unless
+        eonOutSegmentRowStatus cannot be active(1) unless
         the ifTable entry corresponding to
-        mplsOutSegmentInterface exists.
+        eonOutSegmentInterface exists.
 
         Note that the indexing of this table uses a single,
-        arbitrary index (mplsOutSegmentIndex) to indicate
+        arbitrary index (eonOutSegmentIndex) to indicate
         which out-segment (i.e.: label) is being switched to
         from which in-segment (i.e: label) or in-segments.
         This is necessary because it is possible to have an
@@ -792,28 +792,28 @@ mplsOutSegmentEntry  OBJECT-TYPE
         cross-connect (i.e.: they go to two different neighboring
         LSRs); thus, requiring two out-segments. In order to
         preserve the uniqueness of the references
-        by the mplsXCEntry, an arbitrary integer must be used as
+        by the eonXCEntry, an arbitrary integer must be used as
         the index for this table."
-   INDEX { mplsOutSegmentIndex }
-   ::= { mplsOutSegmentTable 1 }
+   INDEX { eonOutSegmentIndex }
+   ::= { eonOutSegmentTable 1 }
 
-MplsOutSegmentEntry ::= SEQUENCE {
-  mplsOutSegmentIndex                MplsIndexType,
-  mplsOutSegmentInterface            InterfaceIndexOrZero,
-  mplsOutSegmentPushTopLabel         TruthValue,
-  mplsOutSegmentTopLabel             MplsLabel,
-  mplsOutSegmentTopLabelPtr          RowPointer,
-  mplsOutSegmentNextHopAddrType      InetAddressType,
-  mplsOutSegmentNextHopAddr          InetAddress,
-  mplsOutSegmentXCIndex              MplsIndexType,
-  mplsOutSegmentOwner                MplsOwner,
-  mplsOutSegmentTrafficParamPtr      RowPointer,
-  mplsOutSegmentRowStatus            RowStatus,
-  mplsOutSegmentStorageType          StorageType
+EonOutSegmentEntry ::= SEQUENCE {
+  eonOutSegmentIndex                EonIndexType,
+  eonOutSegmentInterface            InterfaceIndexOrZero,
+  eonOutSegmentPushTopLabel         TruthValue,
+  eonOutSegmentTopLabel             EonLabel,
+  eonOutSegmentTopLabelPtr          RowPointer,
+  eonOutSegmentNextHopAddrType      InetAddressType,
+  eonOutSegmentNextHopAddr          InetAddress,
+  eonOutSegmentXCIndex              EonIndexType,
+  eonOutSegmentOwner                EonOwner,
+  eonOutSegmentTrafficParamPtr      RowPointer,
+  eonOutSegmentRowStatus            RowStatus,
+  eonOutSegmentStorageType          StorageType
 }
 
-mplsOutSegmentIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonOutSegmentIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -821,25 +821,25 @@ mplsOutSegmentIndex OBJECT-TYPE
         While a value of a string containing the single
         octet 0x00 is not valid as an index for entries
         in this table, it can be supplied as a valid value
-        to index the mplsXCTable to represent entries for
+        to index the eonXCTable to represent entries for
         which no out-segment has been configured or
         exists."
-   ::= { mplsOutSegmentEntry 1 }
+   ::= { eonOutSegmentEntry 1 }
 
-mplsOutSegmentInterface OBJECT-TYPE
+eonOutSegmentInterface OBJECT-TYPE
    SYNTAX        InterfaceIndexOrZero
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "This value must contain the interface index of the
         outgoing interface. This object cannot be modified
-        if mplsOutSegmentRowStatus is active(1). The
-        mplsOutSegmentRowStatus cannot be set to active(1)
+        if eonOutSegmentRowStatus is active(1). The
+        eonOutSegmentRowStatus cannot be set to active(1)
         until this object is set to a value corresponding to
         a valid ifEntry."
-   ::= { mplsOutSegmentEntry 2 }
+   ::= { eonOutSegmentEntry 2 }
 
-mplsOutSegmentPushTopLabel OBJECT-TYPE
+eonOutSegmentPushTopLabel OBJECT-TYPE
    SYNTAX        TruthValue
    MAX-ACCESS    read-create
    STATUS        current
@@ -851,46 +851,46 @@ mplsOutSegmentPushTopLabel OBJECT-TYPE
         pop-and-go (and no label stack remains). For example,
         on ATM interface, or if the segment represents a
         tunnel origination.  Note that it is considered
-        an error in the case that mplsOutSegmentPushTopLabel
+        an error in the case that eonOutSegmentPushTopLabel
         is set to false, but the cross-connect entry which
         refers to this out-segment has a non-zero
-        mplsLabelStackIndex.  The LSR MUST ensure that this
+        eonLabelStackIndex.  The LSR MUST ensure that this
         situation does not happen. This object cannot be
-        modified if mplsOutSegmentRowStatus is active(1)."
+        modified if eonOutSegmentRowStatus is active(1)."
    DEFVAL { true }
-   ::= { mplsOutSegmentEntry 3 }
+   ::= { eonOutSegmentEntry 3 }
 
-mplsOutSegmentTopLabel OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonOutSegmentTopLabel OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
-       "If mplsOutSegmentPushTopLabel is true then this
+       "If eonOutSegmentPushTopLabel is true then this
         represents the label that should be pushed onto the
         top of the outgoing packet's label stack. Otherwise
         this value SHOULD be set to 0 by the management
         station and MUST be ignored by the agent. This
-        object cannot be modified if mplsOutSegmentRowStatus
+        object cannot be modified if eonOutSegmentRowStatus
         is active(1)."
    DEFVAL { 0 }
-   ::= { mplsOutSegmentEntry 4 }
+   ::= { eonOutSegmentEntry 4 }
 
-mplsOutSegmentTopLabelPtr OBJECT-TYPE
+eonOutSegmentTopLabelPtr OBJECT-TYPE
    SYNTAX        RowPointer
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "If the label for this segment cannot be represented
-        fully within the mplsOutSegmentLabel object,
+        fully within the eonOutSegmentLabel object,
         this object MUST point to the first accessible
         column of a conceptual row in an external table containing
-        the label.  In this case, the mplsOutSegmentTopLabel
+        the label.  In this case, the eonOutSegmentTopLabel
         object SHOULD be set to 0 and ignored. This object
         MUST be set to zeroDotZero otherwise."
    DEFVAL { zeroDotZero }
-   ::= { mplsOutSegmentEntry 5 }
+   ::= { eonOutSegmentEntry 5 }
 
-mplsOutSegmentNextHopAddrType OBJECT-TYPE
+eonOutSegmentNextHopAddrType OBJECT-TYPE
    SYNTAX        InetAddressType
    MAX-ACCESS    read-create
    STATUS        current
@@ -906,47 +906,47 @@ mplsOutSegmentNextHopAddrType OBJECT-TYPE
         error."
    REFERENCE
        "See RFC3291."
-   ::= { mplsOutSegmentEntry 6 }
+   ::= { eonOutSegmentEntry 6 }
 
-mplsOutSegmentNextHopAddr OBJECT-TYPE
+eonOutSegmentNextHopAddr OBJECT-TYPE
    SYNTAX        InetAddress
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "The internet address of the next hop. The type of
         this address is determined by the value of the
-        mplslOutSegmentNextHopAddrType object.
+        eonlOutSegmentNextHopAddrType object.
 
         This object cannot be modified if
-        mplsOutSegmentRowStatus is active(1)."
-   ::= { mplsOutSegmentEntry 7 }
+        eonOutSegmentRowStatus is active(1)."
+   ::= { eonOutSegmentEntry 7 }
 
-mplsOutSegmentXCIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonOutSegmentXCIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "Index into mplsXCTable which identifies which cross-
+       "Index into eonXCTable which identifies which cross-
         connect entry this segment is part of.  A value of
         the string containing the single octet 0x00
         indicates that this entry is not referred
         to by any cross-connect entry.  When a cross-connect
         entry is created which this out-segment is a part of,
         this object MUST be updated by the agent to reflect
-        the value of mplsXCIndex of that cross-connect
+        the value of eonXCIndex of that cross-connect
         entry."
-   ::= { mplsOutSegmentEntry 8 }
+   ::= { eonOutSegmentEntry 8 }
 
-mplsOutSegmentOwner OBJECT-TYPE
-   SYNTAX        MplsOwner
+eonOutSegmentOwner OBJECT-TYPE
+   SYNTAX        EonOwner
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Denotes the entity which created and is responsible
         for managing this segment."
-   ::= { mplsOutSegmentEntry 9 }
+   ::= { eonOutSegmentEntry 9 }
 
-mplsOutSegmentTrafficParamPtr OBJECT-TYPE
+eonOutSegmentTrafficParamPtr OBJECT-TYPE
    SYNTAX        RowPointer
    MAX-ACCESS    read-create
    STATUS        current
@@ -954,7 +954,7 @@ mplsOutSegmentTrafficParamPtr OBJECT-TYPE
      "This variable represents a pointer to the traffic
       parameter specification for this out-segment.  This
       value may point at an entry in the
-      MplsTunnelResourceEntry in the MPLS-TE-STD-MIB (RFC3812)
+      EonTunnelResourceEntry in the EON-TE-STD-MIB (RFC3812)
 
       RFC Editor: Please fill in RFC number.
 
@@ -969,15 +969,15 @@ mplsOutSegmentTrafficParamPtr OBJECT-TYPE
       of such things as LSP queue space, etc.
 
       This object cannot be modified if
-      mplsOutSegmentRowStatus is active(1).
+      eonOutSegmentRowStatus is active(1).
       For entries in this table that
       are preserved after a re-boot, the agent MUST ensure
       that their integrity be preserved, or this object should
       be set to 0.0 if it cannot."
    DEFVAL { zeroDotZero }
-   ::= { mplsOutSegmentEntry 10 }
+   ::= { eonOutSegmentEntry 10 }
 
-mplsOutSegmentRowStatus OBJECT-TYPE
+eonOutSegmentRowStatus OBJECT-TYPE
    SYNTAX        RowStatus
    MAX-ACCESS    read-create
    STATUS        current
@@ -985,31 +985,31 @@ mplsOutSegmentRowStatus OBJECT-TYPE
        "For creating, modifying, and deleting this row.
         When a row in this table has a row in the active(1)
         state, no objects in this row can be modified
-        except the mplsOutSegmentRowStatus or
-        mplsOutSegmentStorageType."
-   ::= { mplsOutSegmentEntry 11 }
+        except the eonOutSegmentRowStatus or
+        eonOutSegmentStorageType."
+   ::= { eonOutSegmentEntry 11 }
 
-mplsOutSegmentStorageType OBJECT-TYPE
+eonOutSegmentStorageType OBJECT-TYPE
    SYNTAX        StorageType
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "This variable indicates the storage type for this
         object. The agent MUST ensure that this object's value
-        remains consistent with the associated mplsXCEntry.
+        remains consistent with the associated eonXCEntry.
         Conceptual rows having the value 'permanent'
         need not allow write-access to any columnar
         objects in the row."
    DEFVAL { volatile }
-   ::= { mplsOutSegmentEntry 12 }
+   ::= { eonOutSegmentEntry 12 }
 
--- End of mplsOutSegmentTable
+-- End of eonOutSegmentTable
 
 
 -- out-segment performance table.
 
-mplsOutSegmentPerfTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsOutSegmentPerfEntry
+eonOutSegmentPerfTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonOutSegmentPerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1017,64 +1017,64 @@ mplsOutSegmentPerfTable  OBJECT-TYPE
         outgoing segments from an LSR. The counters in this
         entry should behave in a manner similar to that of
         the interface."
-   ::= { mplsLsrObjects 8 }
+   ::= { eonLsrObjects 8 }
 
-mplsOutSegmentPerfEntry  OBJECT-TYPE
-   SYNTAX        MplsOutSegmentPerfEntry
+eonOutSegmentPerfEntry  OBJECT-TYPE
+   SYNTAX        EonOutSegmentPerfEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "An entry in this table contains statistical
         information about one outgoing segment configured in
-        mplsOutSegmentTable. The object
-        mplsOutSegmentPerfDiscontinuityTime indicates the
+        eonOutSegmentTable. The object
+        eonOutSegmentPerfDiscontinuityTime indicates the
         time of the last discontinuity in these objects. "
-   AUGMENTS      { mplsOutSegmentEntry }
-      ::= { mplsOutSegmentPerfTable 1 }
+   AUGMENTS      { eonOutSegmentEntry }
+      ::= { eonOutSegmentPerfTable 1 }
 
-MplsOutSegmentPerfEntry ::= SEQUENCE {
-      mplsOutSegmentPerfOctets             Counter32,
-      mplsOutSegmentPerfPackets            Counter32,
-      mplsOutSegmentPerfErrors             Counter32,
-      mplsOutSegmentPerfDiscards           Counter32,
+EonOutSegmentPerfEntry ::= SEQUENCE {
+      eonOutSegmentPerfOctets             Counter32,
+      eonOutSegmentPerfPackets            Counter32,
+      eonOutSegmentPerfErrors             Counter32,
+      eonOutSegmentPerfDiscards           Counter32,
 
       -- HC counter
-      mplsOutSegmentPerfHCOctets           Counter64,
+      eonOutSegmentPerfHCOctets           Counter64,
 
-      mplsOutSegmentPerfDiscontinuityTime  TimeStamp
+      eonOutSegmentPerfDiscontinuityTime  TimeStamp
    }
 
-mplsOutSegmentPerfOctets OBJECT-TYPE
+eonOutSegmentPerfOctets OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This value contains the total number of octets sent
         on this segment. It MUST be equal to the least
-        significant 32 bits of mplsOutSegmentPerfHCOctets
-        if mplsOutSegmentPerfHCOctets is supported according to
+        significant 32 bits of eonOutSegmentPerfHCOctets
+        if eonOutSegmentPerfHCOctets is supported according to
         the rules spelled out in RFC2863."
-   ::= { mplsOutSegmentPerfEntry 1 }
+   ::= { eonOutSegmentPerfEntry 1 }
 
-mplsOutSegmentPerfPackets OBJECT-TYPE
+eonOutSegmentPerfPackets OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This value contains the total number of packets sent
         on this segment."
-   ::= { mplsOutSegmentPerfEntry 2 }
+   ::= { eonOutSegmentPerfEntry 2 }
 
-mplsOutSegmentPerfErrors OBJECT-TYPE
+eonOutSegmentPerfErrors OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Number of packets that could not be sent due to
         errors on this segment."
-   ::= { mplsOutSegmentPerfEntry 3 }
+   ::= { eonOutSegmentPerfEntry 3 }
 
-mplsOutSegmentPerfDiscards OBJECT-TYPE
+eonOutSegmentPerfDiscards OBJECT-TYPE
    SYNTAX        Counter32
    MAX-ACCESS    read-only
    STATUS        current
@@ -1085,20 +1085,20 @@ mplsOutSegmentPerfDiscards OBJECT-TYPE
         being transmitted. One possible reason for
         discarding such a labeled packet could be to free up
         buffer space."
-   ::= { mplsOutSegmentPerfEntry 4 }
+   ::= { eonOutSegmentPerfEntry 4 }
 
-mplsOutSegmentPerfHCOctets OBJECT-TYPE
+eonOutSegmentPerfHCOctets OBJECT-TYPE
    SYNTAX        Counter64
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Total number of octets sent.  This is the 64 bit
-        version of mplsOutSegmentPerfOctets,
-        if mplsOutSegmentPerfHCOctets is supported according to
+        version of eonOutSegmentPerfOctets,
+        if eonOutSegmentPerfHCOctets is supported according to
         the rules spelled out in RFC2863."
-   ::= { mplsOutSegmentPerfEntry 5 }
+   ::= { eonOutSegmentPerfEntry 5 }
 
-mplsOutSegmentPerfDiscontinuityTime OBJECT-TYPE
+eonOutSegmentPerfDiscontinuityTime OBJECT-TYPE
    SYNTAX      TimeStamp
    MAX-ACCESS  read-only
    STATUS      current
@@ -1109,111 +1109,111 @@ mplsOutSegmentPerfDiscontinuityTime OBJECT-TYPE
         discontinuities have occurred since the last re-
         initialization of the local management subsystem,
         then this object contains a zero value."
-   ::= { mplsOutSegmentPerfEntry 6 }
+   ::= { eonOutSegmentPerfEntry 6 }
    
--- End of mplsOutSegmentPerfTable.
+-- End of eonOutSegmentPerfTable.
 
 
 -- Cross-connect table.
 
-mplsXCIndexNext OBJECT-TYPE
-   SYNTAX        MplsIndexNextType
+eonXCIndexNext OBJECT-TYPE
+   SYNTAX        EonIndexNextType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This object contains the next available value to
-        be used for mplsXCIndex when creating entries in
-        the mplsXCTable. A special value of the zero length
+        be used for eonXCIndex when creating entries in
+        the eonXCTable. A special value of the zero length
         string indicates that no more new entries can be created
         in the relevant table.  Agents not allowing managers
         to create entries in this table MUST set this value
         to the zero length string."
-   ::= { mplsLsrObjects 9 }
+   ::= { eonLsrObjects 9 }
 
-mplsXCTable  OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsXCEntry
+eonXCTable  OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonXCEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This table specifies information for switching
         between LSP segments.  It supports point-to-point,
         point-to-multipoint and multipoint-to-point
-        connections.  mplsLabelStackTable specifies the
+        connections.  eonLabelStackTable specifies the
         label stack information for a cross-connect LSR and
-        is referred to from mplsXCTable."
-   ::= { mplsLsrObjects 10 }
+        is referred to from eonXCTable."
+   ::= { eonLsrObjects 10 }
 
-mplsXCEntry  OBJECT-TYPE
-   SYNTAX        MplsXCEntry
+eonXCEntry  OBJECT-TYPE
+   SYNTAX        EonXCEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "A row in this table represents one cross-connect
         entry.  It is indexed by the following objects:
 
-        - cross-connect index mplsXCIndex that uniquely
+        - cross-connect index eonXCIndex that uniquely
           identifies a group of cross-connect entries
 
-        - in-segment index, mplsXCInSegmentIndex
+        - in-segment index, eonXCInSegmentIndex
 
-        - out-segment index, mplsXCOutSegmentIndex
+        - out-segment index, eonXCOutSegmentIndex
 		
        LSPs originating at this LSR:
         These are represented by using the special
-        of value of mplsXCInSegmentIndex set to the
+        of value of eonXCInSegmentIndex set to the
         string containing a single octet 0x00. In
-        this case the mplsXCOutSegmentIndex
+        this case the eonXCOutSegmentIndex
         MUST not be the string containing a single
         octet 0x00.
 
        LSPs terminating at this LSR:
         These are represented by using the special value
-        mplsXCOutSegmentIndex set to the string containing
+        eonXCOutSegmentIndex set to the string containing
         a single octet 0x00.
 
        Special labels:
         Entries indexed by the strings containing the
-        reserved MPLS label values as a single octet 0x00
+        reserved EON label values as a single octet 0x00
         through 0x0f (inclusive) imply LSPs terminating at
         this LSR.  Note that situations where LSPs are
         terminated with incoming label equal to the string
         containing a single octet 0x00 can be distinguished
         from LSPs originating at this LSR because the
-        mplsXCOutSegmentIndex equals the string containing the
+        eonXCOutSegmentIndex equals the string containing the
         single octet 0x00.
 
         An entry can be created by a network administrator
-        or by an SNMP agent as instructed by an MPLS
+        or by an SNMP agent as instructed by an EON
         signaling protocol."
-   INDEX { mplsXCIndex, mplsXCInSegmentIndex,
-           mplsXCOutSegmentIndex }
-   ::= { mplsXCTable 1 }
+   INDEX { eonXCIndex, eonXCInSegmentIndex,
+           eonXCOutSegmentIndex }
+   ::= { eonXCTable 1 }
 
-MplsXCEntry ::= SEQUENCE {
-      mplsXCIndex                  MplsIndexType,
-      mplsXCInSegmentIndex         MplsIndexType,
-      mplsXCOutSegmentIndex        MplsIndexType,
-      mplsXCLspId                  MplsLSPID,
-      mplsXCLabelStackIndex        MplsIndexType,
-      mplsXCOwner                  MplsOwner ,
-      mplsXCRowStatus              RowStatus,
-      mplsXCStorageType            StorageType,
-      mplsXCAdminStatus            INTEGER,
-      mplsXCOperStatus             INTEGER
+EonXCEntry ::= SEQUENCE {
+      eonXCIndex                  EonIndexType,
+      eonXCInSegmentIndex         EonIndexType,
+      eonXCOutSegmentIndex        EonIndexType,
+      eonXCLspId                  EonLSPID,
+      eonXCLabelStackIndex        EonIndexType,
+      eonXCOwner                  EonOwner ,
+      eonXCRowStatus              RowStatus,
+      eonXCStorageType            StorageType,
+      eonXCAdminStatus            INTEGER,
+      eonXCOperStatus             INTEGER
    }
 
-mplsXCIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonXCIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "Primary index for the conceptual row identifying a
         group of cross-connect segments. The string
         containing a single octet 0x00 is an invalid index."
-   ::= { mplsXCEntry 1 }
+   ::= { eonXCEntry 1 }
 
-mplsXCInSegmentIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonXCInSegmentIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1221,12 +1221,12 @@ mplsXCInSegmentIndex OBJECT-TYPE
         If this object is set to the string containing
         a single octet 0x00, this indicates a special
         case outlined in the table's description above.
-        In this case no corresponding mplsInSegmentEntry
+        In this case no corresponding eonInSegmentEntry
         shall exist."
-   ::= { mplsXCEntry 2 }
+   ::= { eonXCEntry 2 }
 
-mplsXCOutSegmentIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonXCOutSegmentIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1235,27 +1235,27 @@ mplsXCOutSegmentIndex OBJECT-TYPE
         single octet 0x00. If the segment identified by this
         entry is terminating, then this object MUST be set to
         the string containing a single octet 0x00 to indicate
-        that no corresponding mplsOutSegmentEntry shall
+        that no corresponding eonOutSegmentEntry shall
         exist."
-   ::= { mplsXCEntry 3 }
+   ::= { eonXCEntry 3 }
 
-mplsXCLspId OBJECT-TYPE
-   SYNTAX        MplsLSPID
+eonXCLspId OBJECT-TYPE
+   SYNTAX        EonLSPID
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "This value identifies the label switched path that
         this cross-connect entry belongs to. This object
-        cannot be modified if mplsXCRowStatus is active(1)
+        cannot be modified if eonXCRowStatus is active(1)
         except for this object."
-   ::= { mplsXCEntry 4 }
+   ::= { eonXCEntry 4 }
 
-mplsXCLabelStackIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonXCLabelStackIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
-       "Primary index into mplsLabelStackTable identifying a
+       "Primary index into eonLabelStackTable identifying a
         stack of labels to be pushed beneath the top label.
         Note that the top label identified by the out-
         segment ensures that all the components of a
@@ -1263,20 +1263,20 @@ mplsXCLabelStackIndex OBJECT-TYPE
         outgoing label. A value of the string containing the
         single octet 0x00 indicates that no labels are to
         be stacked beneath the top label.
-        This object cannot be modified if mplsXCRowStatus is
+        This object cannot be modified if eonXCRowStatus is
         active(1)."
-   ::= { mplsXCEntry 5 }
+   ::= { eonXCEntry 5 }
 
-mplsXCOwner OBJECT-TYPE
-   SYNTAX    MplsOwner
+eonXCOwner OBJECT-TYPE
+   SYNTAX    EonOwner
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "Denotes the entity that created and is responsible
         for managing this cross-connect."
-   ::= { mplsXCEntry 6 }
+   ::= { eonXCEntry 6 }
 
-mplsXCRowStatus OBJECT-TYPE
+eonXCRowStatus OBJECT-TYPE
    SYNTAX        RowStatus
    MAX-ACCESS    read-create
    STATUS        current
@@ -1284,10 +1284,10 @@ mplsXCRowStatus OBJECT-TYPE
        "For creating, modifying, and deleting this row.
         When a row in this table has a row in the active(1)
         state, no objects in this row except this object
-        and the mplsXCStorageType can be modified. "
-   ::= { mplsXCEntry 7 }
+        and the eonXCStorageType can be modified. "
+   ::= { eonXCEntry 7 }
 
-mplsXCStorageType OBJECT-TYPE
+eonXCStorageType OBJECT-TYPE
    SYNTAX        StorageType
    MAX-ACCESS    read-create
    STATUS        current
@@ -1303,9 +1303,9 @@ mplsXCStorageType OBJECT-TYPE
         need not allow write-access to any columnar
         objects in the row."
    DEFVAL { volatile }
-   ::= { mplsXCEntry 8 }
+   ::= { eonXCEntry 8 }
 
-mplsXCAdminStatus OBJECT-TYPE
+eonXCAdminStatus OBJECT-TYPE
    SYNTAX   INTEGER {
               up(1),     -- ready to pass packets
               down(2),
@@ -1316,9 +1316,9 @@ mplsXCAdminStatus OBJECT-TYPE
    DESCRIPTION
        "The desired operational status of this segment."
    DEFVAL { up }
-   ::= { mplsXCEntry 9 }
+   ::= { eonXCEntry 9 }
 
-mplsXCOperStatus OBJECT-TYPE
+eonXCOperStatus OBJECT-TYPE
    SYNTAX   INTEGER {
              up(1),            -- ready to pass packets
              down(2),
@@ -1335,48 +1335,48 @@ mplsXCOperStatus OBJECT-TYPE
    DESCRIPTION
        "The actual operational status of this cross-
         connect."
-   ::= { mplsXCEntry 10 }
+   ::= { eonXCEntry 10 }
 
--- End of mplsXCTable
+-- End of eonXCTable
 
 
 -- Label stack table.
 
-mplsMaxLabelStackDepth  OBJECT-TYPE
+eonMaxLabelStackDepth  OBJECT-TYPE
    SYNTAX        Unsigned32 (1..2147483647)
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "The maximum stack depth supported by this LSR."
-::= { mplsLsrObjects 11 }
+::= { eonLsrObjects 11 }
 
-mplsLabelStackIndexNext  OBJECT-TYPE
-   SYNTAX        MplsIndexNextType
+eonLabelStackIndexNext  OBJECT-TYPE
+   SYNTAX        EonIndexNextType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
        "This object contains the next available value to
-        be used for mplsLabelStackIndex when creating entries
-        in the mplsLabelStackTable. The special string
+        be used for eonLabelStackIndex when creating entries
+        in the eonLabelStackTable. The special string
         containing the single octet 0x00
         indicates that no more new entries can be created
         in the relevant table.  Agents not allowing managers
         to create entries in this table MUST set this value
         to the string containing the single octet 0x00."
-::= { mplsLsrObjects 12 }
+::= { eonLsrObjects 12 }
 
-mplsLabelStackTable OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsLabelStackEntry
+eonLabelStackTable OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonLabelStackEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This table specifies the label stack to be pushed
         onto a packet, beneath the top label.  Entries into
-        this table are referred to from mplsXCTable."
-   ::= { mplsLsrObjects 13 }
+        this table are referred to from eonXCTable."
+   ::= { eonLsrObjects 13 }
 
-mplsLabelStackEntry OBJECT-TYPE
-   SYNTAX        MplsLabelStackEntry
+eonLabelStackEntry OBJECT-TYPE
+   SYNTAX        EonLabelStackEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1384,21 +1384,21 @@ mplsLabelStackEntry OBJECT-TYPE
         to be pushed onto an outgoing packet, beneath the
         top label.  An entry can be created by a network
         administrator or by an SNMP agent as instructed by
-        an MPLS signaling protocol."
-   INDEX { mplsLabelStackIndex, mplsLabelStackLabelIndex }
-   ::= { mplsLabelStackTable 1 }
+        an EON signaling protocol."
+   INDEX { eonLabelStackIndex, eonLabelStackLabelIndex }
+   ::= { eonLabelStackTable 1 }
 
-MplsLabelStackEntry ::= SEQUENCE {
-      mplsLabelStackIndex             MplsIndexType,
-      mplsLabelStackLabelIndex        Unsigned32,
-      mplsLabelStackLabel             MplsLabel,
-      mplsLabelStackLabelPtr          RowPointer,
-      mplsLabelStackRowStatus         RowStatus,
-      mplsLabelStackStorageType       StorageType
+EonLabelStackEntry ::= SEQUENCE {
+      eonLabelStackIndex             EonIndexType,
+      eonLabelStackLabelIndex        Unsigned32,
+      eonLabelStackLabel             EonLabel,
+      eonLabelStackLabelPtr          RowPointer,
+      eonLabelStackRowStatus         RowStatus,
+      eonLabelStackStorageType       StorageType
    }
 
-mplsLabelStackIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonLabelStackIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1406,46 +1406,46 @@ mplsLabelStackIndex OBJECT-TYPE
         labels to be pushed on an outgoing packet, beneath
         the top label. An index containing the string with
         a single octet 0x00 MUST not be used."
-   ::= { mplsLabelStackEntry 1 }
+   ::= { eonLabelStackEntry 1 }
 
-mplsLabelStackLabelIndex OBJECT-TYPE
+eonLabelStackLabelIndex OBJECT-TYPE
    SYNTAX        Unsigned32 (1..2147483647)
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "Secondary index for this row identifying one label
         of the stack.  Note that an entry with a smaller
-        mplsLabelStackLabelIndex would refer to a label
+        eonLabelStackLabelIndex would refer to a label
         higher up the label stack and would be popped at a
         downstream LSR before a label represented by a
-        higher mplsLabelStackLabelIndex at a downstream
+        higher eonLabelStackLabelIndex at a downstream
         LSR."
-   ::= { mplsLabelStackEntry 2 }
+   ::= { eonLabelStackEntry 2 }
 
-mplsLabelStackLabel OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonLabelStackLabel OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "The label to pushed."
-   ::= { mplsLabelStackEntry 3 }
+   ::= { eonLabelStackEntry 3 }
 
-mplsLabelStackLabelPtr OBJECT-TYPE
+eonLabelStackLabelPtr OBJECT-TYPE
    SYNTAX        RowPointer
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "If the label for this segment cannot be represented
-        fully within the mplsLabelStackLabel object,
+        fully within the eonLabelStackLabel object,
         this object MUST point to the first accessible
         column of a conceptual row in an external table containing
-        the label.  In this case, the mplsLabelStackLabel
+        the label.  In this case, the eonLabelStackLabel
         object SHOULD be set to 0 and ignored. This object
         MUST be set to zeroDotZero otherwise."
    DEFVAL { zeroDotZero }
-   ::= { mplsLabelStackEntry 4 }
+   ::= { eonLabelStackEntry 4 }
 
-mplsLabelStackRowStatus OBJECT-TYPE
+eonLabelStackRowStatus OBJECT-TYPE
    SYNTAX        RowStatus
    MAX-ACCESS    read-create
    STATUS        current
@@ -1453,17 +1453,17 @@ mplsLabelStackRowStatus OBJECT-TYPE
        "For creating, modifying, and deleting this row.
         When a row in this table has a row in the active(1)
         state, no objects in this row except this object
-        and the mplsLabelStackStorageType can be modified."
-   ::= { mplsLabelStackEntry 5 }
+        and the eonLabelStackStorageType can be modified."
+   ::= { eonLabelStackEntry 5 }
 
-mplsLabelStackStorageType OBJECT-TYPE
+eonLabelStackStorageType OBJECT-TYPE
    SYNTAX        StorageType
    MAX-ACCESS    read-create
    STATUS        current
    DESCRIPTION
        "This variable indicates the storage type for this
         object. This object cannot be modified if
-        mplsLabelStackRowStatus is active(1).
+        eonLabelStackRowStatus is active(1).
         No objects are required to be writable for
         rows in this table with this object set to
         permanent(4).
@@ -1471,31 +1471,31 @@ mplsLabelStackStorageType OBJECT-TYPE
         The agent MUST ensure that all related entries
         in this table retain the same value for this
         object.  Agents MUST ensure that the storage type
-        for all entries related to a particular mplsXCEntry
+        for all entries related to a particular eonXCEntry
         retain the same value for this object as the
-        mplsXCEntry's StorageType."
+        eonXCEntry's StorageType."
    DEFVAL { volatile }
-   ::= { mplsLabelStackEntry 6 }
+   ::= { eonLabelStackEntry 6 }
 
--- End of mplsLabelStackTable
+-- End of eonLabelStackTable
 
--- Begin mplsInSegmentMapTable
+-- Begin eonInSegmentMapTable
 
-mplsInSegmentMapTable OBJECT-TYPE
-   SYNTAX        SEQUENCE OF MplsInSegmentMapEntry
+eonInSegmentMapTable OBJECT-TYPE
+   SYNTAX        SEQUENCE OF EonInSegmentMapEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This table specifies the mapping from the
-        mplsInSegmentIndex to the corresponding
-        mplsInSegmentInterface and mplsInSegmentLabel
+        eonInSegmentIndex to the corresponding
+        eonInSegmentInterface and eonInSegmentLabel
         objects. The purpose of this table is to
         provide the manager with an alternative
         means by which to locate in-segments."
-   ::= { mplsLsrObjects 14 }
+   ::= { eonLsrObjects 14 }
 
-mplsInSegmentMapEntry OBJECT-TYPE
-   SYNTAX        MplsInSegmentMapEntry
+eonInSegmentMapEntry OBJECT-TYPE
+   SYNTAX        EonInSegmentMapEntry
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
@@ -1503,92 +1503,92 @@ mplsInSegmentMapEntry OBJECT-TYPE
         and incoming label pair.
 
         In cases where the label cannot fit into the
-        mplsInSegmentLabel object, the mplsInSegmentLabelPtr
+        eonInSegmentLabel object, the eonInSegmentLabelPtr
         will indicate this by being set to the first accessible
         column in the appropriate extension table's row,
-        and the mplsInSegmentLabel SHOULD be set to 0.
+        and the eonInSegmentLabel SHOULD be set to 0.
         In all other cases when the label is
-        represented within the mplsInSegmentLabel object, the
-        mplsInSegmentLabelPtr MUST be 0.0.
+        represented within the eonInSegmentLabel object, the
+        eonInSegmentLabelPtr MUST be 0.0.
 
         Implementors need to be aware that if the value of
-        the mplsInSegmentMapLabelPtrIndex (an OID) has more
+        the eonInSegmentMapLabelPtrIndex (an OID) has more
         that 111 sub-identifiers, then OIDs of column
         instances in this table will have more than 128
         sub-identifiers and cannot be accessed using SNMPv1,
         SNMPv2c, or SNMPv3."
-   INDEX { mplsInSegmentMapInterface,
-           mplsInSegmentMapLabel,
-           mplsInSegmentMapLabelPtrIndex }
-   ::= { mplsInSegmentMapTable 1 }
+   INDEX { eonInSegmentMapInterface,
+           eonInSegmentMapLabel,
+           eonInSegmentMapLabelPtrIndex }
+   ::= { eonInSegmentMapTable 1 }
 
-MplsInSegmentMapEntry ::= SEQUENCE {
-      mplsInSegmentMapInterface      InterfaceIndexOrZero,
-      mplsInSegmentMapLabel          MplsLabel,
-      mplsInSegmentMapLabelPtrIndex  RowPointer,
-      mplsInSegmentMapIndex          MplsIndexType
+EonInSegmentMapEntry ::= SEQUENCE {
+      eonInSegmentMapInterface      InterfaceIndexOrZero,
+      eonInSegmentMapLabel          EonLabel,
+      eonInSegmentMapLabelPtrIndex  RowPointer,
+      eonInSegmentMapIndex          EonIndexType
    }
 
-mplsInSegmentMapInterface OBJECT-TYPE
+eonInSegmentMapInterface OBJECT-TYPE
    SYNTAX        InterfaceIndexOrZero
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This index contains the same value as the
-        mplsInSegmentIndex in the mplsInSegmentTable."
-   ::= { mplsInSegmentMapEntry 1 }
+        eonInSegmentIndex in the eonInSegmentTable."
+   ::= { eonInSegmentMapEntry 1 }
 
-mplsInSegmentMapLabel OBJECT-TYPE
-   SYNTAX        MplsLabel
+eonInSegmentMapLabel OBJECT-TYPE
+   SYNTAX        EonLabel
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This index contains the same value as the
-        mplsInSegmentLabel in the mplsInSegmentTable."
-   ::= { mplsInSegmentMapEntry 2 }
+        eonInSegmentLabel in the eonInSegmentTable."
+   ::= { eonInSegmentMapEntry 2 }
 
-mplsInSegmentMapLabelPtrIndex OBJECT-TYPE
+eonInSegmentMapLabelPtrIndex OBJECT-TYPE
    SYNTAX        RowPointer
    MAX-ACCESS    not-accessible
    STATUS        current
    DESCRIPTION
        "This index contains the same value as the
-        mplsInSegmentLabelPtr.
+        eonInSegmentLabelPtr.
 
         If the label for the InSegment cannot be represented
-        fully within the mplsInSegmentLabel object,
+        fully within the eonInSegmentLabel object,
         this index MUST point to the first accessible
         column of a conceptual row in an external table containing
-        the label.  In this case, the mplsInSegmentTopLabel
+        the label.  In this case, the eonInSegmentTopLabel
         object SHOULD be set to 0 and ignored. This object MUST
         be set to zeroDotZero otherwise."
-   ::= { mplsInSegmentMapEntry 3 }
+   ::= { eonInSegmentMapEntry 3 }
 
-mplsInSegmentMapIndex OBJECT-TYPE
-   SYNTAX        MplsIndexType
+eonInSegmentMapIndex OBJECT-TYPE
+   SYNTAX        EonIndexType
    MAX-ACCESS    read-only
    STATUS        current
    DESCRIPTION
-       "The mplsInSegmentIndex that corresponds
-        to the mplsInSegmentInterface and
-        mplsInSegmentLabel, or the mplsInSegmentInterface
-        and mplsInSegmentLabelPtr, if applicable.
+       "The eonInSegmentIndex that corresponds
+        to the eonInSegmentInterface and
+        eonInSegmentLabel, or the eonInSegmentInterface
+        and eonInSegmentLabelPtr, if applicable.
         The string containing the single octet 0x00
         MUST not be returned."
-   ::= { mplsInSegmentMapEntry 4 }
+   ::= { eonInSegmentMapEntry 4 }
 
--- End mplsInSegmentMapTable
+-- End eonInSegmentMapTable
 
 
 -- Notification Configuration
 
-mplsXCNotificationsEnable OBJECT-TYPE
+eonXCNotificationsEnable OBJECT-TYPE
    SYNTAX        TruthValue
    MAX-ACCESS    read-write
    STATUS        current
    DESCRIPTION
        "If this object is set to true(1), then it enables
-        the emission of mplsXCUp and mplsXCDown
+        the emission of eonXCUp and eonXCDown
         notifications; otherwise these notifications are not
         emitted."
    REFERENCE
@@ -1596,23 +1596,23 @@ mplsXCNotificationsEnable OBJECT-TYPE
         notifications are under the ultimate control of the
         MIB module in this document."
    DEFVAL { false }
-   ::= { mplsLsrObjects 15 }
+   ::= { eonLsrObjects 15 }
 
 -- Cross-connect.
 
-mplsXCUp NOTIFICATION-TYPE
-   OBJECTS     { mplsXCOperStatus,  -- start of range
-                 mplsXCOperStatus   -- end of range
+eonXCUp NOTIFICATION-TYPE
+   OBJECTS     { eonXCOperStatus,  -- start of range
+                 eonXCOperStatus   -- end of range
    }
    STATUS      current
    DESCRIPTION
        "This notification is generated when the
-        mplsXCOperStatus object for one or more contiguous
-        entries in mplsXCTable are about to enter the up(1)
+        eonXCOperStatus object for one or more contiguous
+        entries in eonXCTable are about to enter the up(1)
         state from some other state. The included values of
-        mplsXCOperStatus MUST both be set equal to this
+        eonXCOperStatus MUST both be set equal to this
         new state (i.e: up(1)).  The two instances of
-        mplsXCOperStatus in this notification indicate the range
+        eonXCOperStatus in this notification indicate the range
         of indexes that are affected.  Note that all the indexes
         of the two ends of the range can be derived from the
         instance identifiers of these two objects.  For
@@ -1624,22 +1624,22 @@ mplsXCUp NOTIFICATION-TYPE
         of notifications.  If a notification has to be
         issued for just a single cross-connect entry, then
         the instance identifier (and values) of the two
-        mplsXCOperStatus objects MUST be the identical."
-   ::= { mplsLsrNotifications 1 }
+        eonXCOperStatus objects MUST be the identical."
+   ::= { eonLsrNotifications 1 }
 
-mplsXCDown NOTIFICATION-TYPE
+eonXCDown NOTIFICATION-TYPE
    OBJECTS     {
-      mplsXCOperStatus,  -- start of range
-      mplsXCOperStatus   -- end of range
+      eonXCOperStatus,  -- start of range
+      eonXCOperStatus   -- end of range
    }
    STATUS      current
    DESCRIPTION
        "This notification is generated when the
-        mplsXCOperStatus object for one or more contiguous
-        entries in mplsXCTable are about to enter the
+        eonXCOperStatus object for one or more contiguous
+        entries in eonXCTable are about to enter the
         down(2) state from some other state. The included values
-        of mplsXCOperStatus MUST both be set equal to this
-        down(2) state.  The two instances of mplsXCOperStatus
+        of eonXCOperStatus MUST both be set equal to this
+        down(2) state.  The two instances of eonXCOperStatus
         in this notification indicate the range of indexes
         that are affected.  Note that all the indexes of the
         two ends of the range can be derived from the
@@ -1652,26 +1652,26 @@ mplsXCDown NOTIFICATION-TYPE
         of notifications.  If a notification has to be
         issued for just a single cross-connect entry, then
         the instance identifier (and values) of the two
-        mplsXCOperStatus objects MUST be identical."
-   ::= { mplsLsrNotifications 2 }
+        eonXCOperStatus objects MUST be identical."
+   ::= { eonLsrNotifications 2 }
 
 -- End of notifications.
 
 
 -- Module compliance.
 
-mplsLsrGroups
-   OBJECT IDENTIFIER ::= { mplsLsrConformance 1 }
+eonLsrGroups
+   OBJECT IDENTIFIER ::= { eonLsrConformance 1 }
 
-mplsLsrCompliances
-   OBJECT IDENTIFIER ::= { mplsLsrConformance 2 }
+eonLsrCompliances
+   OBJECT IDENTIFIER ::= { eonLsrConformance 2 }
 
 -- Compliance requirement for fully compliant implementations.
 
-mplsLsrModuleFullCompliance MODULE-COMPLIANCE
+eonLsrModuleFullCompliance MODULE-COMPLIANCE
    STATUS       current
    DESCRIPTION "Compliance statement for agents that provide full
-                support for MPLS-LSR-STD-MIB. Such devices can
+                support for EON-LSR-STD-MIB. Such devices can
                 then be monitored and also be configured using
                 this MIB module."
 
@@ -1683,38 +1683,38 @@ mplsLsrModuleFullCompliance MODULE-COMPLIANCE
 
    MODULE -- This module.
    MANDATORY-GROUPS {
-         mplsInterfaceGroup,
-         mplsInSegmentGroup,
-         mplsOutSegmentGroup,
-         mplsXCGroup,
-         mplsPerfGroup
+         eonInterfaceGroup,
+         eonInSegmentGroup,
+         eonOutSegmentGroup,
+         eonXCGroup,
+         eonPerfGroup
    }
 
-   GROUP        mplsLabelStackGroup
+   GROUP        eonLabelStackGroup
    DESCRIPTION "This group is only mandatory for LSRs that wish to
                 support the modification of LSP label stacks.
                "
 
-   GROUP        mplsHCInSegmentPerfGroup
+   GROUP        eonHCInSegmentPerfGroup
    DESCRIPTION "This group is mandatory for those in-segment entries
-                for which the object mplsInSegmentOutOctets wraps
+                for which the object eonInSegmentOutOctets wraps
                 around too quickly based on the criteria specified in
                 RFC 2863 for high-capacity counters.
                "
 
-   GROUP        mplsHCOutSegmentPerfGroup
+   GROUP        eonHCOutSegmentPerfGroup
    DESCRIPTION "This group is mandatory for those out-segment entries
-                for which the object mplsOutSegmentPerfOctets wraps
+                for which the object eonOutSegmentPerfOctets wraps
                 around too quickly based on the criteria specified in
                 RFC 2863 for high-capacity counters.
                "
 
-   GROUP        mplsLsrNotificationGroup
+   GROUP        eonLsrNotificationGroup
    DESCRIPTION "This group is only mandatory for those implementations
                 which can efficiently implement the notifications
                 contained in this group."
 
-   OBJECT       mplsInSegmentRowStatus
+   OBJECT       eonInSegmentRowStatus
    SYNTAX       RowStatus { active(1), notInService(2) }
    WRITE-SYNTAX RowStatus { active(1), notInService(2),
                             createAndGo(4), destroy(6)
@@ -1722,17 +1722,17 @@ mplsLsrModuleFullCompliance MODULE-COMPLIANCE
    DESCRIPTION "Support for createAndWait and notReady is
                 not required."
 
-   OBJECT       mplsOutSegmentNextHopAddrType
+   OBJECT       eonOutSegmentNextHopAddrType
    SYNTAX       InetAddressType { unknown(0), ipv4(1), ipv6(2) }
    DESCRIPTION "Only unknown(0), ipv4(1) and ipv6(2) support
                 is required."
 
-   OBJECT       mplsOutSegmentNextHopAddr
+   OBJECT       eonOutSegmentNextHopAddr
    SYNTAX       InetAddress (SIZE(0|4|16))
    DESCRIPTION "An implementation is only required to support
                 unknown(0), ipv4(1) and ipv6(2) sizes."
 
-   OBJECT       mplsOutSegmentRowStatus
+   OBJECT       eonOutSegmentRowStatus
    SYNTAX       RowStatus { active(1), notInService(2) }
    WRITE-SYNTAX RowStatus { active(1), notInService(2),
                             createAndGo(4), destroy(6)
@@ -1740,7 +1740,7 @@ mplsLsrModuleFullCompliance MODULE-COMPLIANCE
    DESCRIPTION "Support for createAndWait and notReady is not
                 required."
 
-   OBJECT       mplsLabelStackRowStatus
+   OBJECT       eonLabelStackRowStatus
    SYNTAX       RowStatus { active(1), notInService(2) }
    WRITE-SYNTAX RowStatus { active(1), notInService(2),
                             createAndGo(4), destroy(6)
@@ -1748,7 +1748,7 @@ mplsLsrModuleFullCompliance MODULE-COMPLIANCE
    DESCRIPTION "Support for createAndWait and notReady is not
                 required."
 
-   OBJECT       mplsXCRowStatus
+   OBJECT       eonXCRowStatus
    SYNTAX       RowStatus { active(1), notInService(2) }
    WRITE-SYNTAX RowStatus { active(1), notInService(2),
                             createAndGo(4), destroy(6)
@@ -1756,14 +1756,14 @@ mplsLsrModuleFullCompliance MODULE-COMPLIANCE
    DESCRIPTION "Support for createAndWait and notReady is not
                 required."
 
-   ::= { mplsLsrCompliances 1 }
+   ::= { eonLsrCompliances 1 }
 
 -- Compliance requirement for read-only implementations.
 
-mplsLsrModuleReadOnlyCompliance MODULE-COMPLIANCE
+eonLsrModuleReadOnlyCompliance MODULE-COMPLIANCE
    STATUS       current
    DESCRIPTION "Compliance requirement for implementations that only
-                provide read-only support for MPLS-LSR-STD-MIB. Such
+                provide read-only support for EON-LSR-STD-MIB. Such
                 devices can then be monitored but cannot be configured
                 using this MIB module.
                "
@@ -1776,242 +1776,242 @@ mplsLsrModuleReadOnlyCompliance MODULE-COMPLIANCE
 
    MODULE -- This module
    MANDATORY-GROUPS {
-         mplsInterfaceGroup,
-         mplsInSegmentGroup,
-         mplsOutSegmentGroup,
-         mplsXCGroup,
-         mplsPerfGroup
+         eonInterfaceGroup,
+         eonInSegmentGroup,
+         eonOutSegmentGroup,
+         eonXCGroup,
+         eonPerfGroup
      }
-   GROUP        mplsLabelStackGroup
+   GROUP        eonLabelStackGroup
    DESCRIPTION "This group is only mandatory for LSRs that wish to
                 support the modification of LSP label stacks.
                "
 
-   GROUP        mplsHCInSegmentPerfGroup
+   GROUP        eonHCInSegmentPerfGroup
    DESCRIPTION "This group is mandatory for those in-segment entries
-                for which the object mplsInSegmentOutOctets wraps
+                for which the object eonInSegmentOutOctets wraps
                 around too quickly based on the criteria specified in
                 RFC 2863 for high-capacity counters.
                "
 
-   GROUP        mplsHCOutSegmentPerfGroup
+   GROUP        eonHCOutSegmentPerfGroup
    DESCRIPTION "This group is mandatory for those out-segment entries
-                for which the object mplsOutSegmentPerfOctets wraps
+                for which the object eonOutSegmentPerfOctets wraps
                 around too quickly based on the criteria specified in
                 RFC 2863 for high-capacity counters.
                "
 
-   GROUP        mplsLsrNotificationGroup
+   GROUP        eonLsrNotificationGroup
    DESCRIPTION "This group is only mandatory for those implementations
                 which can efficiently implement the notifications
                 contained in this group.
                "
 
-   -- mplsInSegmentTable
-   OBJECT       mplsInSegmentLabel
+   -- eonInSegmentTable
+   OBJECT       eonInSegmentLabel
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsInSegmentLabelPtr
+   OBJECT       eonInSegmentLabelPtr
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsInSegmentNPop
+   OBJECT       eonInSegmentNPop
    SYNTAX       Integer32 (1..1)
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required.  This object
                 SHOULD be set to 1 if it is read-only.
                "
 
-   OBJECT       mplsInSegmentAddrFamily
+   OBJECT       eonInSegmentAddrFamily
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required.  A value of other(0)
                 should be supported because there may be cases where
                 the agent may not know about or support any address
                 types.
                "
-   OBJECT       mplsInSegmentRowStatus
+   OBJECT       eonInSegmentRowStatus
    SYNTAX       RowStatus { active(1) }
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsInSegmentStorageType
+   OBJECT       eonInSegmentStorageType
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   -- mplsOutSegmentTable
-   OBJECT       mplsOutSegmentInterface
+   -- eonOutSegmentTable
+   OBJECT       eonOutSegmentInterface
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsOutSegmentPushTopLabel
+   OBJECT       eonOutSegmentPushTopLabel
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsOutSegmentTopLabel
+   OBJECT       eonOutSegmentTopLabel
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsOutSegmentTopLabelPtr
+   OBJECT       eonOutSegmentTopLabelPtr
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsOutSegmentNextHopAddrType
+   OBJECT       eonOutSegmentNextHopAddrType
    SYNTAX       InetAddressType { unknown(0), ipv4(1), ipv6(2) }
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required.  Only unknown(0),
                 ipv4(1) and ipv6(2) support is required.
                "
 
-   OBJECT       mplsOutSegmentNextHopAddr
+   OBJECT       eonOutSegmentNextHopAddr
    SYNTAX       InetAddress (SIZE(0|4|16))
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required. An implementation is
                 only required to support unknown(0), ipv4(1) and
                 ipv6(2) sizes."
 
-   OBJECT       mplsOutSegmentRowStatus
+   OBJECT       eonOutSegmentRowStatus
    SYNTAX       RowStatus { active(1) }
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsOutSegmentStorageType
+   OBJECT       eonOutSegmentStorageType
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   -- mplsXCTable
-   OBJECT       mplsXCLabelStackIndex
+   -- eonXCTable
+   OBJECT       eonXCLabelStackIndex
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsXCAdminStatus
+   OBJECT       eonXCAdminStatus
    MIN-ACCESS   read-only
    DESCRIPTION "Read only support is required."
 
-   OBJECT       mplsXCRowStatus
+   OBJECT       eonXCRowStatus
    SYNTAX       RowStatus { active(1) }
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsXCStorageType
+   OBJECT       eonXCStorageType
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsLabelStackLabel
+   OBJECT       eonLabelStackLabel
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsLabelStackLabelPtr
+   OBJECT       eonLabelStackLabelPtr
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsLabelStackRowStatus
+   OBJECT       eonLabelStackRowStatus
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   OBJECT       mplsLabelStackStorageType
+   OBJECT       eonLabelStackStorageType
    MIN-ACCESS   read-only
    DESCRIPTION "Write access is not required."
 
-   ::= { mplsLsrCompliances 2 }
+   ::= { eonLsrCompliances 2 }
 
 -- Units of conformance.
 
-mplsInterfaceGroup OBJECT-GROUP
+eonInterfaceGroup OBJECT-GROUP
    OBJECTS {
-      mplsInterfaceLabelMinIn,
-      mplsInterfaceLabelMaxIn,
-      mplsInterfaceLabelMinOut,
-      mplsInterfaceLabelMaxOut,
-      mplsInterfaceTotalBandwidth,
-      mplsInterfaceAvailableBandwidth,
-      mplsInterfaceLabelParticipationType
+      eonInterfaceLabelMinIn,
+      eonInterfaceLabelMaxIn,
+      eonInterfaceLabelMinOut,
+      eonInterfaceLabelMaxOut,
+      eonInterfaceTotalBandwidth,
+      eonInterfaceAvailableBandwidth,
+      eonInterfaceLabelParticipationType
    }
 
    STATUS  current
    DESCRIPTION
-          "Collection of objects needed for MPLS interface
+          "Collection of objects needed for EON interface
            and interface performance information."
-   ::= { mplsLsrGroups 1 }
+   ::= { eonLsrGroups 1 }
 
-mplsInSegmentGroup  OBJECT-GROUP
+eonInSegmentGroup  OBJECT-GROUP
    OBJECTS {
-      mplsInSegmentIndexNext,
-      mplsInSegmentInterface,
-      mplsInSegmentLabel,
-      mplsInSegmentLabelPtr,
-      mplsInSegmentNPop,
-      mplsInSegmentAddrFamily,
-      mplsInSegmentXCIndex,
-      mplsInSegmentOwner,
-      mplsInSegmentRowStatus,
-      mplsInSegmentStorageType,
-      mplsInSegmentTrafficParamPtr,
-      mplsInSegmentMapIndex
+      eonInSegmentIndexNext,
+      eonInSegmentInterface,
+      eonInSegmentLabel,
+      eonInSegmentLabelPtr,
+      eonInSegmentNPop,
+      eonInSegmentAddrFamily,
+      eonInSegmentXCIndex,
+      eonInSegmentOwner,
+      eonInSegmentRowStatus,
+      eonInSegmentStorageType,
+      eonInSegmentTrafficParamPtr,
+      eonInSegmentMapIndex
    }
    STATUS  current
    DESCRIPTION
           "Collection of objects needed to implement an in-
            segment."
-   ::= { mplsLsrGroups 2 }
+   ::= { eonLsrGroups 2 }
 
-mplsOutSegmentGroup  OBJECT-GROUP
+eonOutSegmentGroup  OBJECT-GROUP
    OBJECTS {
-      mplsOutSegmentIndexNext,
-      mplsOutSegmentInterface,
-      mplsOutSegmentPushTopLabel,
-      mplsOutSegmentTopLabel,
-      mplsOutSegmentTopLabelPtr,
-      mplsOutSegmentNextHopAddrType,
-      mplsOutSegmentNextHopAddr,
-      mplsOutSegmentXCIndex,
-      mplsOutSegmentOwner,
-      mplsOutSegmentPerfOctets,
-      mplsOutSegmentPerfDiscards,
-      mplsOutSegmentPerfErrors,
-      mplsOutSegmentRowStatus,
-      mplsOutSegmentStorageType,
-      mplsOutSegmentTrafficParamPtr
+      eonOutSegmentIndexNext,
+      eonOutSegmentInterface,
+      eonOutSegmentPushTopLabel,
+      eonOutSegmentTopLabel,
+      eonOutSegmentTopLabelPtr,
+      eonOutSegmentNextHopAddrType,
+      eonOutSegmentNextHopAddr,
+      eonOutSegmentXCIndex,
+      eonOutSegmentOwner,
+      eonOutSegmentPerfOctets,
+      eonOutSegmentPerfDiscards,
+      eonOutSegmentPerfErrors,
+      eonOutSegmentRowStatus,
+      eonOutSegmentStorageType,
+      eonOutSegmentTrafficParamPtr
    }
    STATUS  current
    DESCRIPTION
           "Collection of objects needed to implement an out-
            segment."
-   ::= { mplsLsrGroups 3 }
+   ::= { eonLsrGroups 3 }
 
-mplsXCGroup  OBJECT-GROUP
+eonXCGroup  OBJECT-GROUP
    OBJECTS {
-      mplsXCIndexNext,
-      mplsXCLspId,
-      mplsXCLabelStackIndex,
-      mplsXCOwner,
-      mplsXCStorageType,
-      mplsXCAdminStatus,
-      mplsXCOperStatus,
-      mplsXCRowStatus,
-      mplsXCNotificationsEnable
+      eonXCIndexNext,
+      eonXCLspId,
+      eonXCLabelStackIndex,
+      eonXCOwner,
+      eonXCStorageType,
+      eonXCAdminStatus,
+      eonXCOperStatus,
+      eonXCRowStatus,
+      eonXCNotificationsEnable
    }
    STATUS  current
    DESCRIPTION
           "Collection of objects needed to implement a
            cross-connect entry."
-   ::= { mplsLsrGroups 4 }
+   ::= { eonLsrGroups 4 }
 
-mplsPerfGroup OBJECT-GROUP
+eonPerfGroup OBJECT-GROUP
    OBJECTS {
-      mplsInSegmentPerfOctets,
-      mplsInSegmentPerfPackets,
-      mplsInSegmentPerfErrors,
-      mplsInSegmentPerfDiscards,
-      mplsInSegmentPerfDiscontinuityTime,
-      mplsOutSegmentPerfOctets,
-      mplsOutSegmentPerfPackets,
-      mplsOutSegmentPerfDiscards,
-      mplsOutSegmentPerfDiscontinuityTime,
-      mplsInterfacePerfInLabelsInUse,
-      mplsInterfacePerfInLabelLookupFailures,
-      mplsInterfacePerfOutFragmentedPkts,
-      mplsInterfacePerfOutLabelsInUse
+      eonInSegmentPerfOctets,
+      eonInSegmentPerfPackets,
+      eonInSegmentPerfErrors,
+      eonInSegmentPerfDiscards,
+      eonInSegmentPerfDiscontinuityTime,
+      eonOutSegmentPerfOctets,
+      eonOutSegmentPerfPackets,
+      eonOutSegmentPerfDiscards,
+      eonOutSegmentPerfDiscontinuityTime,
+      eonInterfacePerfInLabelsInUse,
+      eonInterfacePerfInLabelLookupFailures,
+      eonInterfacePerfOutFragmentedPkts,
+      eonInterfacePerfOutLabelsInUse
    }
 
    STATUS  current
@@ -2019,49 +2019,49 @@ mplsPerfGroup OBJECT-GROUP
           "Collection of objects providing performance
            information
         about an LSR."
-   ::= { mplsLsrGroups 5 }
+   ::= { eonLsrGroups 5 }
 
-mplsHCInSegmentPerfGroup OBJECT-GROUP
-   OBJECTS { mplsInSegmentPerfHCOctets }
+eonHCInSegmentPerfGroup OBJECT-GROUP
+   OBJECTS { eonInSegmentPerfHCOctets }
    STATUS  current
    DESCRIPTION
           "Object(s) providing performance information
            specific to out-segments for which the object
-           mplsInterfaceInOctets wraps around too quickly."
-   ::= { mplsLsrGroups 6 }
+           eonInterfaceInOctets wraps around too quickly."
+   ::= { eonLsrGroups 6 }
 
-mplsHCOutSegmentPerfGroup OBJECT-GROUP
-   OBJECTS { mplsOutSegmentPerfHCOctets }
+eonHCOutSegmentPerfGroup OBJECT-GROUP
+   OBJECTS { eonOutSegmentPerfHCOctets }
    STATUS  current
    DESCRIPTION
           "Object(s) providing performance information
            specific to out-segments for which the object
-           mplsInterfaceOutOctets wraps around too
+           eonInterfaceOutOctets wraps around too
            quickly."
-   ::= { mplsLsrGroups 7 }
+   ::= { eonLsrGroups 7 }
 
-mplsLabelStackGroup OBJECT-GROUP
+eonLabelStackGroup OBJECT-GROUP
    OBJECTS {
-      mplsLabelStackLabel,
-      mplsLabelStackLabelPtr,
-      mplsLabelStackRowStatus,
-      mplsLabelStackStorageType,
-      mplsMaxLabelStackDepth,
-      mplsLabelStackIndexNext
+      eonLabelStackLabel,
+      eonLabelStackLabelPtr,
+      eonLabelStackRowStatus,
+      eonLabelStackStorageType,
+      eonMaxLabelStackDepth,
+      eonLabelStackIndexNext
    }
    STATUS current
    DESCRIPTION
           "Objects needed to support label stacking."
-      ::= { mplsLsrGroups 8 }
+      ::= { eonLsrGroups 8 }
 
-mplsLsrNotificationGroup NOTIFICATION-GROUP
+eonLsrNotificationGroup NOTIFICATION-GROUP
    NOTIFICATIONS {
-      mplsXCUp,
-      mplsXCDown
+      eonXCUp,
+      eonXCDown
    }
    STATUS  current
    DESCRIPTION
           "Set of notifications implemented in this
            module."
-   ::= { mplsLsrGroups 9 }
+   ::= { eonLsrGroups 9 }
 END
