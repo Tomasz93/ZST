@@ -25,7 +25,7 @@ LAST-UPDATED "201411290000Z"  -- November 29, 2014
 
    	DESCRIPTION
        		"This MIB module is designed to describe commutation 
-		node of Elastic Optical Network. We based on MPLS 
+		node of Elastic Optical Network, based on MPLS 
 		MIB module desrcibed in RFC 3813 and RFC 3811."
 	::= { transmission 166 }
 	   
@@ -37,7 +37,7 @@ EonIndexType ::= TEXTUAL-CONVENTION
        		"This is an octet string that can be used as a table
         	index in cases where a large addressable space is
         	required such as on a Network Node where many applications
-        	may be provisioning lambdas."
+        	may be provisioning currents."
    	SYNTAX              OCTET STRING (SIZE(1..24))
    
 -- Notifications
@@ -74,12 +74,12 @@ eonInterfaceEntry OBJECT-TYPE
    
 EonInterfaceEntry ::= SEQUENCE {
   	eonInterfaceIndex                  InterfaceIndexOrZero,
-  	eonInterfaceMinCurrentIn           Hertz,
-  	eonInterfaceMaxCurrentIn           Hertz,
-  	eonInterfaceMinCurrentOut          Hertz,
-  	eonInterfaceMaxCurrentOut          Hertz,
-  	eonInterfaceMaxSlotsIn             Number,
-  	eonInterfaceMaxSlotsOut            Number,
+  	eonInterfaceMinCarrierIn           Hertz,
+  	eonInterfaceMaxCarrierIn           Hertz,
+  	eonInterfaceMinCarrierOut          Hertz,
+  	eonInterfaceMaxCarrierOut          Hertz,
+  	eonInterfaceMaxSlotsIn             Integer32,
+  	eonInterfaceMaxSlotsOut            Integer32,
 }
 eonInterfaceIndex OBJECT-TYPE
    	SYNTAX        InterfaceIndexOrZero
@@ -90,65 +90,67 @@ eonInterfaceIndex OBJECT-TYPE
         	eonInterfaceTable."
    	::= { eonInterfaceEntry 1 }
 
-eonInterfaceMinCurrentIn OBJECT-TYPE
+eonInterfaceMinCarrierIn OBJECT-TYPE
    	SYNTAX        	Hertz
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-       		"This is the minimum value of an EON Lambda that this
+       		"This is the minimum value of an EON Carrier that this
         	Network Node is willing to receive on this interface."
    	::= { eonInterfaceEntry 2 }
 
-eonInterfaceMaxCurrentIn OBJECT-TYPE
+eonInterfaceMaxCarrierIn OBJECT-TYPE
    	SYNTAX        	Hertz
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-       		"This is the maximum value of an EON Lambda that this
+       		"This is the maximum value of an EON Carrier that this
         	Network Node is willing to receive on this interface."
    	::= { eonInterfaceEntry 3 }
 
-eonInterfaceMinCurrentOut OBJECT-TYPE
+eonInterfaceMinCarrierOut OBJECT-TYPE
    	SYNTAX        	Hertz
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
      	DESCRIPTION
-       		"This is the minimum value of an EON Lambda that this
+       		"This is the minimum value of an EON Carrier that this
         	NetworkNode is willing to send on this interface."
    	::= { eonInterfaceEntry 4 }
 
-eonInterfaceMaxCurrentOut OBJECT-TYPE
-        SYNTAX          Hertz
-	MAX-ACCESS 	read-only
-	STATUS 		current
+eonInterfaceMaxCarrierOut OBJECT-TYPE
+    SYNTAX          Hertz
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-       		"This is the maximum value of an EON Lambda that this
+       		"This is the maximum value of an EON Carrier that this
         	Network Node is willing to send on this interface."
    	::= { eonInterfaceEntry 5 }
    
 eonInterfaceMaxSlotsIn OBJECT-TYPE
-	SYNTAX 		Number
+	SYNTAX 		Integer32
 	MAX-ACCESS 	read-only
 	STATUS 		current
 	DESCRIPTION
-		"This is the value of available slots in node"
+		"This is the maximum value of an EON slots that are
+		available to be used in a Network Node."
 	::={ eonInterfaceEntry 6}
    
 eonInterfaceMaxSlotsOut OBJECT-TYPE
-	SYNTAX 		Number
+	SYNTAX 		Integer32
 	MAX-ACCESS 	read-only
 	STATUS 		current
 	DESCRIPTION
-		"This is the value of available slots in node"
+		"This is the maximum value of an EON slots that are
+		available to be used in a Network Node."
 	::={ eonInterfaceEntry 7}
 
 eonInSegmentTable  OBJECT-TYPE
    	SYNTAX        	SEQUENCE OF EonInSegmentEntry
-	MAX-ACCESS 	not-accesible
-	STATUS 		current
+	MAX-ACCESS 		not-accesible
+	STATUS 			current
    	DESCRIPTION
        		"This table contains a description of the incoming EON
-        	waves (lambdas) to an Network Node and their associated parameters.
+        	waves (Carriers) into an Network Node and their associated parameters.
         	The index for this table is eonInSegmentIndex."
       	::= { eonNetworkNodeObjects 2 }
 
@@ -158,18 +160,18 @@ eonInSegmentEntry  OBJECT-TYPE
    	STATUS        current
    	DESCRIPTION
        		"An entry in this table represents one incoming
-        	lambda wave.
+        	optical wave.
         	An entry can be created by a network
         	administrator or an SNMP agent.The creator of the entry
-		is denoted by eonInSegmentOwner."
+			is denoted by eonInSegmentOwner."
    	INDEX { eonInSegmentIndex }
    	::= { eonInSegmentTable 1 }
 
 EonInSegmentEntry ::= SEQUENCE {
  	eonInSegmentIndex                EonIndexType,
   	eonInSegmentInterface            InterfaceIndexOrZero,
-  	eonInSegmentCurrent              Hertz,
-  	eonInSegmentSlots                Number,
+  	eonInSegmentCarrier              Hertz,
+  	eonInSegmentSlots                Integer32,
   	eonInSegmentXCIndex              EonIndexType,
   	eonInSegmentOwner                EonOwner,
   	eonInSegmentRowStatus            RowStatus,
@@ -177,8 +179,8 @@ EonInSegmentEntry ::= SEQUENCE {
 
 eonInSegmentIndex OBJECT-TYPE
    	SYNTAX        	EonIndexType
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
        		"The index for this in-segment. The
         	string containing the single octet 0x00
@@ -187,43 +189,43 @@ eonInSegmentIndex OBJECT-TYPE
  
 eonInSegmentInterface OBJECT-TYPE
    	SYNTAX        	InterfaceIndexOrZero
-	MAX-ACCESS 	read-create
-	STATUS 		current
+	MAX-ACCESS 		read-create
+	STATUS 			current
    	DESCRIPTION
        		"This object represents the
         	interface index for the incoming wave.  A
         	value of zero represents all interfaces participating in
         	the per-platform label space.  This may only be used
         	in cases where the incoming interface and label
-        	are associated with the same mplsXCEntry. Specifically,
+        	are associated with the same eonXCEntry. Specifically,
         	given a label and any incoming interface pair from the
         	per-platform label space, the outgoing label/interface
         	mapping remains the same. If this is not the case,
         	then individual entries MUST exist that
-        	can then be mapped to unique mplsXCEntries."
+        	can then be mapped to unique eonXCEntries."
    	::= { eonInSegmentEntry 2 }
 
-eonInSegmentCurrent OBJECT-TYPE
+eonInSegmentCarrier OBJECT-TYPE
    	SYNTAX        	Hertz
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-     		"Object contain incoming lamdba associated with this in-segment."
+     		"Object contain incoming Carrier associated with this in-segment."
    	::= { eonInSegmentEntry 3 }
 
 eonInSegmentSlots OBJECT-TYPE
-   	SYNTAX        	Number
-	MAX-ACCESS 	read-only
-	STATUS 		current
+   	SYNTAX        	Integer32
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-     		"Object contain incoming lamdba associated with this in-segment."
+     		"Object contain incoming available slots associated with this in-segment."
    	::= { eonInSegmentEntry 4 }
 
 
 eonInSegmentXCIndex OBJECT-TYPE
    	SYNTAX        	EonIndexType
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
        		"Index into eonXCTable which identifies which cross-
         	connect entry this segment is part of.  The string
@@ -231,14 +233,14 @@ eonInSegmentXCIndex OBJECT-TYPE
         	entry is not referred to by any cross-connect entry.
         	When a cross-connect entry is created which this
         	in-segment is a part of, this object is automatically
-        	updated to reflect the value of mplsXCIndex of that
+        	updated to reflect the value of eonXCIndex of that
         	cross-connect entry."
    	::= { eonInSegmentEntry 5 }
 
 eonInSegmentOwner OBJECT-TYPE
    	SYNTAX        	EonOwner
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
        		"Denotes the entity that created and is responsible
         	for managing this segment."
@@ -246,8 +248,8 @@ eonInSegmentOwner OBJECT-TYPE
    
 eonInSegmentRowStatus OBJECT-TYPE
    	SYNTAX        	RowStatus
-	MAX-ACCESS 	read-create
-	STATUS 		current
+	MAX-ACCESS 		read-create
+	STATUS 			current
    		DESCRIPTION
        		"This variable is used to create, modify, and/or
         	delete a row in this table. When a row in this
@@ -287,7 +289,7 @@ eonOutSegmentEntry  OBJECT-TYPE
         	cross-connect (i.e.: they go to two different neighboring
         	LSRs); thus, requiring two out-segments. In order to
         	preserve the uniqueness of the references
-        	by the mplsXCEntry, an arbitrary integer must be used as
+        	by the eonXCEntry, an arbitrary integer must be used as
         	the index for this table."
    	INDEX { eonOutSegmentIndex }
    	::= { eonOutSegmentTable 1 }
@@ -295,8 +297,8 @@ eonOutSegmentEntry  OBJECT-TYPE
 EonOutSegmentEntry ::= SEQUENCE {
   	eonOutSegmentIndex                EonIndexType,
   	eonOutSegmentInterface            InterfaceIndexOrZero,
-  	eonOutSegmentCurrent	          Hertz,
-  	eonOutSegmentSlots	          Number,
+  	eonOutSegmentCarrier	          Hertz,
+  	eonOutSegmentSlots		          Integer32,
   	eonOutSegmentXCIndex              EonIndexType,
   	eonOutSegmentOwner                EonOwner,
   	eonOutSegmentRowStatus            RowStatus,
@@ -319,8 +321,8 @@ eonOutSegmentIndex OBJECT-TYPE
 
 eonOutSegmentInterface OBJECT-TYPE
    	SYNTAX        	InterfaceIndexOrZero
-	MAX-ACCESS 	read-create
-	STATUS 		current
+	MAX-ACCESS 		read-create
+	STATUS 			current
    	DESCRIPTION
        		"This value must contain the interface index of the
         	outgoing interface. This object cannot be modified
@@ -330,26 +332,26 @@ eonOutSegmentInterface OBJECT-TYPE
         	a valid ifEntry."
    	::= { eonOutSegmentEntry 2 }
 
-eonOutSegmentCurrent OBJECT-TYPE
-   	SYNTAX        	EonCurrent
-	MAX-ACCESS 	read-only
-	STATUS 		current
+eonOutSegmentCarrier OBJECT-TYPE
+   	SYNTAX        	EonCarrier
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-       		"Object contain incoming lamdba associated with this out-segment."
+       		"Object contain incoming Carrier associated with this out-segment."
    	::= { eonOutSegmentEntry 3 }
 
-eonOutSegmentCurrent OBJECT-TYPE
-   	SYNTAX        	EonCurrent
-	MAX-ACCESS 	read-only
-	STATUS 		current
+eonOutSegmentCarrier OBJECT-TYPE
+   	SYNTAX        	EonCarrier
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
-       		"Object contain incoming lamdba associated with this out-segment."
+       		"Object contain incoming Carrier associated with this out-segment."
    	::= { eonOutSegmentEntry 4 }
 
 eonOutSegmentXCIndex OBJECT-TYPE
    	SYNTAX        	EonIndexType
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
        		"Index into eonXCTable which identifies which cross-
         	connect entry this segment is part of.  A value of
@@ -364,8 +366,8 @@ eonOutSegmentXCIndex OBJECT-TYPE
 
 eonOutSegmentOwner OBJECT-TYPE
    	SYNTAX        	EonOwner
-	MAX-ACCESS 	read-only
-	STATUS 		current
+	MAX-ACCESS 		read-only
+	STATUS 			current
    	DESCRIPTION
        		"Denotes the entity which created and is responsible
         	for managing this segment."
@@ -373,8 +375,8 @@ eonOutSegmentOwner OBJECT-TYPE
 
 eonOutSegmentRowStatus OBJECT-TYPE
    	SYNTAX        	RowStatus
-	MAX-ACCESS 	read-create
-	STATUS 		current
+	MAX-ACCESS 		read-create
+	STATUS 			current
    	DESCRIPTION
        		"For creating, modifying, and deleting this row.
         	When a row in this table has a row in the active(1)
@@ -421,7 +423,7 @@ EonXCEntry ::= SEQUENCE {
       	eonXCOutSegmentIndex        EonIndexType,
       	eonXCCspId                  EonCSPID,
       	eonXCOwner                  EonOwner,
-	eonXCRowStatus		    RowStatus,
+		eonXCRowStatus			    RowStatus,
    }
 
 eonXCIndex OBJECT-TYPE
@@ -439,7 +441,7 @@ eonXCInSegmentIndex OBJECT-TYPE
    	MAX-ACCESS    not-accesible
    	STATUS        current
    	DESCRIPTION
-       		"Incoming current index."
+       		"This object contains value of incoming optical wave index."
    	::= { eonXCEntry 2 }
 
 eonXCOutSegmentIndex OBJECT-TYPE
@@ -447,15 +449,15 @@ eonXCOutSegmentIndex OBJECT-TYPE
    	MAX-ACCESS    not-accesible
    	STATUS        current
    	DESCRIPTION
-       		"Index of out-segment."
+       		"This object contains value of out-going optical wave index."
    	::= { eonXCEntry 3 }
 
 eonXCCspId OBJECT-TYPE
-   	SYNTAX        EonCurrentPathID
+   	SYNTAX        EonCarrierPathID
    	MAX-ACCESS    read-create
-   	STATUS        current
+   	STATUS        Carrier
    	DESCRIPTION
-       		"This value identifies the lambda switched path that
+       		"This value identifies the carrier switched path that
         	this cross-connect entry belongs to."
    	::= { eonXCEntry 4 }
 
